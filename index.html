@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.01-v1 · โปรตุลาคม 2569 -->
+<!-- LG Subscribe Calculator build 2026.10.01-v2 · โปรตุลาคม 2569 · Subscribe Day แสดงและเปิดสวิตช์ -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -801,7 +801,7 @@
  </div>
  </section>
 
- <!-- Special Combo Promotion — ซ่อนจนกว่าจะมีโปรพิเศษที่ตั้งชื่อ/ช่วงวัน -->
+ <!-- SUBSCRIBE DAY Special Deal — แสดงแถบและสวิตช์ · ราคา 15% มีผลเฉพาะช่วงวันที่กำหนด -->
  <section class="special-combo-banner" x-show="hasSpecialComboConfigured()" :class="specialCombo ? 'active' : ''">
  <div class="special-combo-glow"></div>
  <div style="position:relative;z-index:2">
@@ -1587,7 +1587,7 @@
 function lgCalculator() {
  return {
  customerType: 'new',
- specialCombo: false,
+ specialCombo: true,
  showComboSettings: false,
  // โปรปกติ + โปรพิเศษ — ตั้งค่าได้เอง
  promoConfig: {
@@ -1597,11 +1597,12 @@ function lgCalculator() {
  newTiers: [ {min:2, rate:10} ],
  existTiers: [ {min:1, rate:10} ]
  },
+ // SUBSCRIBE DAY Special Deal — 22–25 ก.ย. 2569 · ใหม่ 2+ / เก่า 1+ · ลด 15% ทุกบิล · โปรคอมโบ
  special: {
- name: '',
- dateStart: '',
- dateEnd: '',
- note: '',
+ name: 'SUBSCRIBE DAY Special Deal',
+ dateStart: '2569-09-22',
+ dateEnd: '2569-09-25',
+ note: 'ใหม่ 2 ชิ้นขึ้นไป / เก่า 1 ชิ้นขึ้นไป · ลด 15% ทุกบิล · โปรคอมโบ',
  newTiers: [ {min:2, rate:15} ],
  existTiers: [ {min:1, rate:15} ]
  },
@@ -1758,7 +1759,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.01-v1',
+ buildVersion: '2026.10.01-v2',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2940,10 +2941,10 @@ function lgCalculator() {
  existTiers: [ {min:1, rate:10} ]
  },
  special: {
- name: '',
- dateStart: '',
- dateEnd: '',
- note: '',
+ name: 'SUBSCRIBE DAY Special Deal',
+ dateStart: '2569-09-22',
+ dateEnd: '2569-09-25',
+ note: 'ใหม่ 2 ชิ้นขึ้นไป / เก่า 1 ชิ้นขึ้นไป · ลด 15% ทุกบิล · โปรคอมโบ',
  newTiers: [ {min:2, rate:15} ],
  existTiers: [ {min:1, rate:15} ]
  },
@@ -2954,7 +2955,7 @@ function lgCalculator() {
  note: 'บิลแรก 99.- · บางรุ่นต่อด้วยลด 50% · 8–11 ก.ย. 2569'
  }
  };
- this.specialCombo = this.isSpecialComboInPeriod();
+ this.specialCombo = true;
  this.showToast('รีเซ็ตเป็นค่าเริ่มต้นแล้ว');
  },
  currentModel() {
