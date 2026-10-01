@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.01-v2 · โปรตุลาคม 2569 · Subscribe Day แสดงและเปิดสวิตช์ -->
+<!-- LG Subscribe Calculator build 2026.10.01-v3 · โปรตุลาคม 2569 · Subscribe Day โชว์ไว้ ยังไม่ระบุวัน/ส่วนลด -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -801,7 +801,7 @@
  </div>
  </section>
 
- <!-- SUBSCRIBE DAY Special Deal — แสดงแถบและสวิตช์ · ราคา 15% มีผลเฉพาะช่วงวันที่กำหนด -->
+ <!-- SUBSCRIBE DAY — แถบกับสวิตช์มีไว้ วันและส่วนลดยังว่าง · ราคาใช้คอมโบเดือน -->
  <section class="special-combo-banner" x-show="hasSpecialComboConfigured()" :class="specialCombo ? 'active' : ''">
  <div class="special-combo-glow"></div>
  <div style="position:relative;z-index:2">
@@ -811,7 +811,7 @@
  <div>
  <div class="font-display font-bold text-lg" style="color:var(--ink)" x-text="promoConfig.special.name"></div>
  <div class="text-xs" style="color:var(--ink)" x-show="promoConfig.special.note" x-text="promoConfig.special.note"></div>
- <div class="text-xs" style="color:var(--muted)" x-text="'เฉพาะ ' + fmtDate(promoConfig.special.dateStart) + ' – ' + fmtDate(promoConfig.special.dateEnd) + ' เท่านั้น'"></div>
+ <div class="text-xs" style="color:var(--muted)" x-show="promoConfig.special.dateStart && promoConfig.special.dateEnd" x-text="'เฉพาะ ' + fmtDate(promoConfig.special.dateStart) + ' – ' + fmtDate(promoConfig.special.dateEnd) + ' เท่านั้น'"></div>
  </div>
  </div>
  <div class="flex items-center gap-3">
@@ -835,8 +835,7 @@
  </div>
  <div class="text-xs mt-2" style="color:var(--muted)" x-show="!specialCombo && !showComboSettings"> ปิด = คอมโบเดือนปกติ · ใบเสนอ/สรุปถึงวันหมดโปรเดือน · เปิด = ส่วนลดพิเศษ และใบเสนอ/สรุปถึงวันหมดคอมโบ
  </div>
- <div class="text-xs mt-2" style="color:#b45309" x-show="specialCombo && !isSpecialComboInPeriod() && !showComboSettings"> โปรพิเศษหมดช่วงแล้ว (หลัง <span x-text="fmtDate(promoConfig.special.dateEnd)"></span>) — คิดราคา/ใบเสนอเป็นคอมโบเดือนปกติอัตโนมัติ
- </div>
+ <div class="text-xs mt-2" style="color:#b45309" x-show="specialCombo && !isSpecialComboInPeriod() && !showComboSettings" x-text="specialComboIdleText()"></div>
 
  <!-- Combo Settings Panel -->
  <div class="combo-settings" x-show="showComboSettings" x-transition>
@@ -1318,7 +1317,7 @@
  <div>
  <div class="font-display font-bold text-lg" style="color:var(--ink)" x-text="promoConfig.normal.name"></div>
  <div class="text-xs mt-1" style="color:var(--muted)" x-text="fmtDate(promoConfig.normal.dateStart) + ' – ' + fmtDate(promoConfig.normal.dateEnd) + ' · โปรคอมโบเดือนปกติ'"></div>
- <div class="text-xs mt-1" style="color:#b45309" x-show="specialCombo && !isSpecialComboInPeriod()">คอมโบพิเศษหมดช่วงแล้ว · ใช้คอมโบเดือนปกติอัตโนมัติ</div>
+ <div class="text-xs mt-1" style="color:#b45309" x-show="specialCombo && !isSpecialComboInPeriod()" x-text="specialComboIdleText()"></div>
  </div>
  </template>
  <template x-if="isSpecialComboEffective()">
@@ -1587,7 +1586,7 @@
 function lgCalculator() {
  return {
  customerType: 'new',
- specialCombo: true,
+ specialCombo: false,
  showComboSettings: false,
  // โปรปกติ + โปรพิเศษ — ตั้งค่าได้เอง
  promoConfig: {
@@ -1597,14 +1596,14 @@ function lgCalculator() {
  newTiers: [ {min:2, rate:10} ],
  existTiers: [ {min:1, rate:10} ]
  },
- // SUBSCRIBE DAY Special Deal — 22–25 ก.ย. 2569 · ใหม่ 2+ / เก่า 1+ · ลด 15% ทุกบิล · โปรคอมโบ
+ // SUBSCRIBE DAY — มีฟังก์ชันไว้ ยังไม่ระบุวันและส่วนลด · ราคาใช้คอมโบเดือน
  special: {
  name: 'SUBSCRIBE DAY Special Deal',
- dateStart: '2569-09-22',
- dateEnd: '2569-09-25',
- note: 'ใหม่ 2 ชิ้นขึ้นไป / เก่า 1 ชิ้นขึ้นไป · ลด 15% ทุกบิล · โปรคอมโบ',
- newTiers: [ {min:2, rate:15} ],
- existTiers: [ {min:1, rate:15} ]
+ dateStart: '',
+ dateEnd: '',
+ note: 'ยังไม่ระบุวันและส่วนลด · ตอนนี้ใช้คอมโบเดือน',
+ newTiers: [],
+ existTiers: []
  },
  // 9.9 Surprise Deal — จบ 11 ก.ย. 2569 · catalog กลับบิลแรก 149 ตามโปรเดือน
  eventPromo: {
@@ -1759,7 +1758,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.01-v2',
+ buildVersion: '2026.10.01-v3',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2942,11 +2941,11 @@ function lgCalculator() {
  },
  special: {
  name: 'SUBSCRIBE DAY Special Deal',
- dateStart: '2569-09-22',
- dateEnd: '2569-09-25',
- note: 'ใหม่ 2 ชิ้นขึ้นไป / เก่า 1 ชิ้นขึ้นไป · ลด 15% ทุกบิล · โปรคอมโบ',
- newTiers: [ {min:2, rate:15} ],
- existTiers: [ {min:1, rate:15} ]
+ dateStart: '',
+ dateEnd: '',
+ note: 'ยังไม่ระบุวันและส่วนลด · ตอนนี้ใช้คอมโบเดือน',
+ newTiers: [],
+ existTiers: []
  },
  eventPromo: {
  name: '9.9 Surprise Deal',
@@ -2955,7 +2954,7 @@ function lgCalculator() {
  note: 'บิลแรก 99.- · บางรุ่นต่อด้วยลด 50% · 8–11 ก.ย. 2569'
  }
  };
- this.specialCombo = true;
+ this.specialCombo = false;
  this.showToast('รีเซ็ตเป็นค่าเริ่มต้นแล้ว');
  },
  currentModel() {
@@ -3273,12 +3272,22 @@ function lgCalculator() {
  },
  hasSpecialComboConfigured() {
  const sp = this.promoConfig && this.promoConfig.special;
- return !!(sp && String(sp.name || '').trim() && sp.dateStart && sp.dateEnd);
+ return !!(sp && String(sp.name || '').trim());
  },
- // วันนี้ยังอยู่ในช่วง special combo หรือไม่
+ specialComboIdleText() {
+ const sp = (this.promoConfig && this.promoConfig.special) || {};
+ const tiers = [].concat(sp.newTiers || [], sp.existTiers || []);
+ const ready = !!(sp.dateStart && sp.dateEnd && tiers.some(t => t && t.rate > 0));
+ if (!ready) return 'ยังไม่ระบุวันหรือส่วนลด — ใช้คอมโบเดือน';
+ return 'โปรพิเศษหมดช่วงแล้ว (หลัง ' + this.fmtDate(sp.dateEnd) + ') — ใช้คอมโบเดือน';
+ },
+ // วันนี้ยังอยู่ในช่วง special combo หรือไม่ — ต้องมีทั้งวันและส่วนลด
  isSpecialComboInPeriod() {
- if (!this.hasSpecialComboConfigured()) return false;
- return this.isBeRangeActive(this.promoConfig && this.promoConfig.special);
+ const sp = this.promoConfig && this.promoConfig.special;
+ if (!sp || !sp.dateStart || !sp.dateEnd) return false;
+ const tiers = [].concat(sp.newTiers || [], sp.existTiers || []);
+ if (!tiers.some(t => t && t.rate > 0)) return false;
+ return this.isBeRangeActive(sp);
  },
  // ใช้คอมโบพิเศษจริงๆ เฉพาะเมื่อเปิดสวิตช์ + ยังไม่หมดช่วง
  // ปิดสวิตช์ หรือหมดโปร special → คอมโบเดือนปกติ (ใบเสนอ/สรุปด้วย)
