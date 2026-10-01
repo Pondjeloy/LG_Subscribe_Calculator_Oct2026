@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.01-v3 · โปรตุลาคม 2569 · Subscribe Day โชว์ไว้ ยังไม่ระบุวัน/ส่วนลด -->
+<!-- LG Subscribe Calculator build 2026.10.01-v4 · โปรตุลาคม 2569 · ส่วนลดใบราคาขึ้น Combo Special -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -1366,7 +1366,7 @@
  </div>
  <div class="flex justify-between" style="color:var(--ink)" x-show="comboRate() > 0">
  <span class="font-semibold">
- <span x-text="'ส่วนลด ' + comboLabel() + ' ' + comboRateText()"></span>
+ <span x-text="'ส่วนลด ' + quoteComboDiscountText()"></span>
  <span x-show="isSpecialComboEffective()" class="tag tag-recommend" style="margin-left:4px">SPECIAL</span>
  </span>
  <span class="font-mono font-semibold" x-text="'-฿' + comboDiscount().toLocaleString()"></span>
@@ -1758,7 +1758,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.01-v3',
+ buildVersion: '2026.10.01-v4',
  quoteCustomer: {
    name: '',
    address: '',
@@ -3325,6 +3325,21 @@ function lgCalculator() {
  if (water) return '15%';
  return base + '%';
  },
+ // บรรทัดส่วนลดบนใบเสนอราคา / ใบสรุปราคา
+ quoteComboDiscountText() {
+ const base = Math.round(this.comboRate() * 100);
+ if (base <= 0) return '';
+ const water = (this.cart || []).some(it => this.isWaterItem(it) && !it.outright);
+ const other = (this.cart || []).some(it => !this.isWaterItem(it) && !it.outright);
+ const specialOn = this.isSpecialComboEffective();
+ const specialName = specialOn
+   ? String((this.promoConfig && this.promoConfig.special && this.promoConfig.special.name) || '').trim()
+   : '';
+ const label = specialName || 'Combo Special';
+ if (water && other) return label + ' ' + base + '% · เครื่องกรองน้ำ 15%';
+ if (water) return label + ' · เครื่องกรองน้ำ 15%';
+ return label + ' ' + base + '%';
+ },
  comboLabel() {
  const name = this.activePromo().name || 'Combo';
  // Escape HTML without requiring document (safe in copy/summary paths)
@@ -4441,13 +4456,12 @@ function lgCalculator() {
       const ct = this.customerType === 'new' ? 'ลูกค้าใหม่' : 'ลูกค้าเก่า';
       const lowest = this.lowestInstallmentInfo();
       const hasCombo = this.comboRate() > 0;
-      const cr = Math.round(this.comboRate() * 100);
 
       // ─── Tags header ───
       let txt = '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;font-size:0.82em">';
       txt += '<span style="background:#fee2e2;color:#991b1b;padding:2px 9px;border-radius:99px;font-weight:600">' + ct + '</span>';
       txt += '<span style="background:#e0e7ff;color:#3730a3;padding:2px 9px;border-radius:99px">' + n + ' รายการ</span>';
-      if (hasCombo) txt += '<span style="background:#fef9c3;color:#92400e;padding:2px 9px;border-radius:99px">' + this.comboLabel() + ' ' + this.comboRateText() + (this.isSpecialComboEffective() ? ' SPECIAL' : '') + '</span>';
+      if (hasCombo) txt += '<span style="background:#fef9c3;color:#92400e;padding:2px 9px;border-radius:99px">' + this.quoteComboDiscountText() + (this.isSpecialComboEffective() ? ' SPECIAL' : '') + '</span>';
       txt += '<span style="background:#f0fdf4;color:#166534;padding:2px 9px;border-radius:99px">' + this.promoDateText() + '</span>';
       txt += '</div>';
 
@@ -4482,7 +4496,7 @@ function lgCalculator() {
         txt += '<div style="margin-top:5px;font-size:0.85em">จ่ายรายเดือน <strong>฿' + this.netMonthly().toLocaleString() + '</strong>/เดือน ตลอดสัญญา</div>';
       }
       if (hasCombo) {
-        txt += '<div style="margin-top:3px;font-size:0.82em;color:#7c3aed">ส่วนลด ' + this.comboLabel() + ' ' + cr + '% — ประหยัด ฿' + this.comboDiscount().toLocaleString() + '/เดือน</div>';
+        txt += '<div style="margin-top:3px;font-size:0.82em;color:#7c3aed">ส่วนลด ' + this.quoteComboDiscountText() + ' — ประหยัด ฿' + this.comboDiscount().toLocaleString() + '/เดือน</div>';
       }
       txt += '<div style="margin-top:3px;font-size:0.78em;color:#9ca3af">' + this.customerPromoRuleText() + '</div>';
       txt += '</div>';
@@ -4560,7 +4574,7 @@ function lgCalculator() {
       txt += '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:11px 14px;margin-top:4px">';
       if (hasCombo) {
         txt += '<div style="font-size:0.85em;color:#374151">ยอดรวมก่อนส่วนลด: ฿' + this.totalMonthly().toLocaleString() + '/เดือน</div>';
-        txt += '<div style="font-size:0.85em;color:#7c3aed">ส่วนลด ' + this.comboLabel() + ' ' + cr + '%: −฿' + this.comboDiscount().toLocaleString() + '/เดือน</div>';
+        txt += '<div style="font-size:0.85em;color:#7c3aed">ส่วนลด ' + this.quoteComboDiscountText() + ': −฿' + this.comboDiscount().toLocaleString() + '/เดือน</div>';
         txt += '<div style="font-weight:600;margin-top:2px">ค่าเช่าสุทธิ/เดือน: ฿' + this.netMonthly().toLocaleString() + '</div>';
       } else {
         txt += '<div style="font-weight:600">ค่าเช่ารายเดือน: ฿' + this.netMonthly().toLocaleString() + '</div>';
@@ -4582,7 +4596,6 @@ function lgCalculator() {
     copySummary() {
       if (this.cart.length === 0) { this.showToast('เลือกสินค้าก่อนคัดลอก'); return; }
       const hasCombo = this.comboRate() > 0;
-      const cr = Math.round(this.comboRate() * 100);
       const ct = this.customerType === 'new' ? 'ลูกค้าใหม่' : 'ลูกค้าเก่า';
       const ann = this.annualBreakdown();
       const lines = [];
@@ -4594,7 +4607,7 @@ function lgCalculator() {
       lines.push(headerTitle);
 
       let headerSub = ct + ' | ' + this.promoDateText();
-      if (hasCombo) headerSub += ' | ' + this.comboLabel() + ' ' + this.comboRateText();
+      if (hasCombo) headerSub += ' | ' + this.quoteComboDiscountText();
       lines.push(headerSub);
 
       lines.push('ยอดชำระครั้งแรกรวม: ' + this.fmtMoney(this.firstPaymentTotal()) + ' บาท');
@@ -4712,7 +4725,7 @@ function lgCalculator() {
         lines.push('');
         lines.push('สรุปรวม ' + this.cart.length + ' รายการ');
         if (hasCombo) {
-          lines.push(this.comboLabel() + ' ' + cr + '% · ค่าเช่าสุทธิ ' + this.netMonthly().toLocaleString() + ' บาท/เดือน');
+          lines.push('ส่วนลด ' + this.quoteComboDiscountText() + ' · ค่าเช่าสุทธิ ' + this.netMonthly().toLocaleString() + ' บาท/เดือน');
         }
         // ยอดผ่อนรวมทุกชิ้นต่อช่วง
         const cartRanges = this.cartBillRangeTotals();
@@ -4970,7 +4983,6 @@ function lgCalculator() {
       const titleEn = isProposal ? 'Quotation' : 'Price Summary';
       const ct = this.customerType === 'new' ? 'ลูกค้าใหม่' : 'ลูกค้าเก่า';
       const hasCombo = this.comboRate() > 0;
-      const cr = Math.round(this.comboRate() * 100);
       const grand = this.grandTotal();
       const firstPay = this.firstPaymentTotal();
       const excl = Math.round(grand * 100 / 107 * 100) / 100;
@@ -5152,8 +5164,8 @@ function lgCalculator() {
       }
       if (hasVal(q.email)) custRows += '<tr><td class="lbl">E-Mail :</td><td class="val" colspan="3">' + esc(String(q.email).trim()) + '</td></tr>';
       const custBlock = custRows
-        ? ('<div class="cust"><table>' + custRows + '</table><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.comboLabel()) + ' ' + esc(this.comboRateText()) : '') + ' · ' + this.cart.length + ' รายการ</div></div>')
-        : ('<div class="cust"><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.comboLabel()) + ' ' + esc(this.comboRateText()) : '') + ' · ' + this.cart.length + ' รายการ</div></div>');
+        ? ('<div class="cust"><table>' + custRows + '</table><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.quoteComboDiscountText()) : '') + ' · ' + this.cart.length + ' รายการ</div></div>')
+        : ('<div class="cust"><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.quoteComboDiscountText()) : '') + ' · ' + this.cart.length + ' รายการ</div></div>');
 
       // ผู้เสนอราคา — แสดงเฉพาะช่องที่มีค่า
       let sellerInfo = '';
@@ -5431,7 +5443,7 @@ ${'</'+'style>'}
         ${this.hasOutright() ? '<div class="row"><span>ซื้อขาดรวม</span><span>฿' + this.fmtMoney(this.totalOutright()) + '</span></div>' : ''}
         ${payPeriodRows}
         ${showGrand ? (
-          (hasCombo ? '<div class="row"><span>ส่วนลด Combo ' + esc(this.comboLabel()) + ' ' + cr + '%</span><span>−฿' + this.fmtMoney(this.grandTotalSaving()) + '</span></div>' : '')
+          (hasCombo ? '<div class="row"><span>ส่วนลด ' + esc(this.quoteComboDiscountText()) + '</span><span>−฿' + this.fmtMoney(this.grandTotalSaving()) + '</span></div>' : '')
           + '<div class="row"><span>ส่วนลดทั้งหมด</span><span>฿' + this.fmtMoney(totalDiscountAll) + '</span></div>'
           + '<div class="row grand"><span>ยอดรวมทั้งสิ้น</span><span>฿' + this.fmtMoney(grand) + '</span></div>'
           + '<div class="baht">฿ BAHT : ' + esc(this.bahtText(grand)) + '</div>'
