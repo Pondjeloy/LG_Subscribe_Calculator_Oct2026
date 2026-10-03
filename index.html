@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.01-v5 · โปรตุลาคม 2569 · ตู้เย็นระบุจำนวนคิว -->
+<!-- LG Subscribe Calculator build 2026.10.03-v6 · โปรตุลาคม 2569 · Subscribe Day 3–18 ต.ค. -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -801,7 +801,7 @@
  </div>
  </section>
 
- <!-- SUBSCRIBE DAY — แถบกับสวิตช์มีไว้ วันและส่วนลดยังว่าง · ราคาใช้คอมโบเดือน -->
+ <!-- Subscribe Day 3–18 ต.ค. 2569 · ใหม่ 2+ / เดิม 1+ 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20% -->
  <section class="special-combo-banner" x-show="hasSpecialComboConfigured()" :class="specialCombo ? 'active' : ''">
  <div class="special-combo-glow"></div>
  <div style="position:relative;z-index:2">
@@ -831,6 +831,10 @@
  <div class="special-rate-card">
  <div class="text-xs" style="color:var(--muted)">ลูกค้าเก่า (Exist)</div>
  <div style="color:var(--ink);font-size:13px" x-html="promoConfig.special.existTiers.map(t => t.min + '+ ชิ้น → <strong>' + t.rate + '%</strong>').join(' · ')"></div>
+ </div>
+ <div class="special-rate-card" x-show="Number(promoConfig.special.waterRate) > 0">
+ <div class="text-xs" style="color:var(--muted)">เครื่องกรองน้ำ</div>
+ <div style="color:var(--ink);font-size:13px" x-html="'ในตะกร้าที่เข้าเงื่อนไข → <strong>' + promoConfig.special.waterRate + '%</strong>'"></div>
  </div>
  </div>
  <div class="text-xs mt-2" style="color:var(--muted)" x-show="!specialCombo && !showComboSettings"> ปิด = คอมโบเดือนปกติ · ใบเสนอ/สรุปถึงวันหมดโปรเดือน · เปิด = ส่วนลดพิเศษ และใบเสนอ/สรุปถึงวันหมดคอมโบ
@@ -1324,7 +1328,7 @@
  <div>
  <div class="font-display font-bold text-lg" x-text="promoConfig.special.name"></div>
  <div class="text-xs mt-1" x-show="promoConfig.special.note" x-text="promoConfig.special.note"></div>
- <div class="text-xs mt-1" x-text="fmtDate(promoConfig.special.dateStart) + ' – ' + fmtDate(promoConfig.special.dateEnd) + ' · ส่วนลดสูงสุด ' + Math.max(...promoConfig.special.newTiers.map(t=>t.rate), ...promoConfig.special.existTiers.map(t=>t.rate)) + '%'"></div>
+ <div class="text-xs mt-1" x-text="fmtDate(promoConfig.special.dateStart) + ' – ' + fmtDate(promoConfig.special.dateEnd) + ' · ส่วนลดสูงสุด ' + Math.max(0, ...promoConfig.special.newTiers.map(t=>t.rate), ...promoConfig.special.existTiers.map(t=>t.rate), Number(promoConfig.special.waterRate)||0) + '%'"></div>
  <div class="text-xs mt-1" style="opacity:.85">ใบเสนอ/สรุป: สงวนสิทธิ์ถึงวันหมดคอมโบพิเศษ</div>
  </div>
  </template>
@@ -1555,7 +1559,7 @@
  <p class="mb-1"><strong>หมายเหตุ:</strong></p>
  <ol style="list-style:decimal;padding-left:18px;line-height:1.7">
  <li>ราคานี้คำนวณจากเอกสารโปรโมชั่น OBS ตุลาคม 2569 · Promotion Oct_01-31 Oct 2026_Master.xlsx และ Sale Price 1–31 ต.ค. 2569 (LGETH 1 ต.ค. 2569)</li>
- <li>เครื่องกรองน้ำ Subscribe: รอบบิลที่ 1–9 ราคา 99.- (ยกเว้นซื้อขาด) · ในตะกร้าที่เข้าเงื่อนไขคอมโบ เครื่องกรองน้ำลด 15% เฉพาะเครื่องกรองน้ำ สินค้าอื่นลด 10%</li>
+ <li x-text="waterComboFootnote()"></li>
  <li>สินค้าเครื่องกรองน้ำ พื้นที่บริการไม่ครอบคลุมทั่วประเทศ กรุณาตรวจสอบก่อนติดตั้ง</li>
  <li x-show="isEventPromoActive()" x-text="(promoConfig.eventPromo.name || 'โปรอีเวนต์') + ' มีผล ' + fmtDate(promoConfig.eventPromo.dateStart) + ' – ' + fmtDate(promoConfig.eventPromo.dateEnd)"></li>
  <li x-show="isSpecialComboEffective()" x-text="'โปร ' + (promoConfig.special.name || 'Combo') + ' มีผลถึง ' + fmtDate(promoConfig.special.dateEnd)"></li>
@@ -1594,16 +1598,19 @@ function lgCalculator() {
  name: 'Special Combo Promotion',
  dateStart: '2569-10-01', dateEnd: '2569-10-31',
  newTiers: [ {min:2, rate:10} ],
- existTiers: [ {min:1, rate:10} ]
+ existTiers: [ {min:1, rate:10} ],
+ waterRate: 15
  },
- // SUBSCRIBE DAY — มีฟังก์ชันไว้ ยังไม่ระบุวันและส่วนลด · ราคาใช้คอมโบเดือน
+ // Subscribe Day 2nd Anniversary — ไฟล์ 1042739 · 3–18 ต.ค. 2569
+ // ใหม่ 2 เครื่อง 15% · เดิม 1 เครื่อง 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20%
  special: {
- name: 'SUBSCRIBE DAY Special Deal',
- dateStart: '',
- dateEnd: '',
- note: 'ยังไม่ระบุวันและส่วนลด · ตอนนี้ใช้คอมโบเดือน',
- newTiers: [],
- existTiers: []
+ name: 'Subscribe Day',
+ dateStart: '2569-10-03',
+ dateEnd: '2569-10-18',
+ note: '2nd Anniversary · ลูกค้าใหม่ 2 เครื่องขึ้นไป 15% · ลูกค้าเดิม 1 เครื่องขึ้นไป 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20%',
+ newTiers: [ {min:2, rate:15} ],
+ existTiers: [ {min:1, rate:15} ],
+ waterRate: 20
  },
  // 9.9 Surprise Deal — จบ 11 ก.ย. 2569 · catalog กลับบิลแรก 149 ตามโปรเดือน
  eventPromo: {
@@ -1758,7 +1765,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.01-v5',
+ buildVersion: '2026.10.03-v6',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2872,7 +2879,9 @@ function lgCalculator() {
    || parsed?.special?.dateStart !== codeS.dateStart
    || parsed?.special?.dateEnd !== codeS.dateEnd
    || parsed?.special?.name !== codeS.name
-   || (parsed?.special?.note || '') !== (codeS.note || '');
+   || (parsed?.special?.note || '') !== (codeS.note || '')
+   || Number(parsed?.normal?.waterRate || 0) !== Number(codeN.waterRate || 0)
+   || Number(parsed?.special?.waterRate || 0) !== Number(codeS.waterRate || 0);
  if (stale) {
  localStorage.removeItem('lgPromoConfig');
  } else {
@@ -2937,15 +2946,17 @@ function lgCalculator() {
  name: 'Special Combo Promotion',
  dateStart: '2569-10-01', dateEnd: '2569-10-31',
  newTiers: [ {min:2, rate:10} ],
- existTiers: [ {min:1, rate:10} ]
+ existTiers: [ {min:1, rate:10} ],
+ waterRate: 15
  },
  special: {
- name: 'SUBSCRIBE DAY Special Deal',
- dateStart: '',
- dateEnd: '',
- note: 'ยังไม่ระบุวันและส่วนลด · ตอนนี้ใช้คอมโบเดือน',
- newTiers: [],
- existTiers: []
+ name: 'Subscribe Day',
+ dateStart: '2569-10-03',
+ dateEnd: '2569-10-18',
+ note: '2nd Anniversary · ลูกค้าใหม่ 2 เครื่องขึ้นไป 15% · ลูกค้าเดิม 1 เครื่องขึ้นไป 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20%',
+ newTiers: [ {min:2, rate:15} ],
+ existTiers: [ {min:1, rate:15} ],
+ waterRate: 20
  },
  eventPromo: {
  name: '9.9 Surprise Deal',
@@ -2954,7 +2965,7 @@ function lgCalculator() {
  note: 'บิลแรก 99.- · บางรุ่นต่อด้วยลด 50% · 8–11 ก.ย. 2569'
  }
  };
- this.specialCombo = false;
+ this.specialCombo = this.isSpecialComboInPeriod();
  this.showToast('รีเซ็ตเป็นค่าเริ่มต้นแล้ว');
  },
  currentModel() {
@@ -3310,25 +3321,45 @@ function lgCalculator() {
  const cat = (item && item.category) || '';
  return cat.indexOf('เครื่องกรองน้ำ') >= 0;
  },
+ // เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไขได้เรทของโปรที่ใช้อยู่
+ // คอมโบเดือน waterRate 15 · Subscribe Day waterRate 20
+ waterComboPercent() {
+ const promo = this.activePromo() || {};
+ const n = Number(promo.waterRate);
+ return n > 0 ? n : 0;
+ },
  comboRateFor(item) {
  const base = this.comboRate();
  if (!(base > 0) || !item || item.outright) return item && item.outright ? 0 : base;
- if (this.isWaterItem(item)) return 0.15;
+ const water = this.waterComboPercent();
+ if (this.isWaterItem(item) && water > 0) return water / 100;
  return base;
  },
  comboRateText() {
  const base = Math.round(this.comboRate() * 100);
  if (base <= 0) return '';
+ const waterPct = this.waterComboPercent();
  const water = (this.cart || []).some(it => this.isWaterItem(it) && !it.outright);
  const other = (this.cart || []).some(it => !this.isWaterItem(it) && !it.outright);
- if (water && other) return 'สินค้าทั่วไป ' + base + '% · เครื่องกรองน้ำ 15%';
- if (water) return '15%';
+ const split = water && waterPct > 0 && waterPct !== base;
+ if (split && other) return 'สินค้าทั่วไป ' + base + '% · เครื่องกรองน้ำ ' + waterPct + '%';
+ if (split) return waterPct + '%';
  return base + '%';
+ },
+ waterComboFootnote() {
+ const promo = this.activePromo() || {};
+ const tiers = [].concat(promo.newTiers || [], promo.existTiers || []);
+ const rate = tiers.reduce((m, t) => Math.max(m, Number(t && t.rate) || 0), 0);
+ const water = this.waterComboPercent();
+ const head = 'เครื่องกรองน้ำ Subscribe: รอบบิลที่ 1–9 ราคา 99.- (ยกเว้นซื้อขาด)';
+ if (!(water > 0) || !(rate > 0) || water === rate) return head;
+ return head + ' · ในตะกร้าที่เข้าเงื่อนไขคอมโบ เครื่องกรองน้ำลด ' + water + '% เฉพาะเครื่องกรองน้ำ สินค้าอื่นลด ' + rate + '%';
  },
  // บรรทัดส่วนลดบนใบเสนอราคา / ใบสรุปราคา
  quoteComboDiscountText() {
  const base = Math.round(this.comboRate() * 100);
  if (base <= 0) return '';
+ const waterPct = this.waterComboPercent();
  const water = (this.cart || []).some(it => this.isWaterItem(it) && !it.outright);
  const other = (this.cart || []).some(it => !this.isWaterItem(it) && !it.outright);
  const specialOn = this.isSpecialComboEffective();
@@ -3336,8 +3367,9 @@ function lgCalculator() {
    ? String((this.promoConfig && this.promoConfig.special && this.promoConfig.special.name) || '').trim()
    : '';
  const label = specialName || 'Combo Special';
- if (water && other) return label + ' ' + base + '% · เครื่องกรองน้ำ 15%';
- if (water) return label + ' · เครื่องกรองน้ำ 15%';
+ const split = water && waterPct > 0 && waterPct !== base;
+ if (split && other) return label + ' ' + base + '% · เครื่องกรองน้ำ ' + waterPct + '%';
+ if (split) return label + ' · เครื่องกรองน้ำ ' + waterPct + '%';
  return label + ' ' + base + '%';
  },
  comboLabel() {
@@ -4898,7 +4930,7 @@ function lgCalculator() {
       }
       const waterSub = (this.cart || []).filter(it => (it.category === 'เครื่องกรองน้ำ') && !it.outright);
       if (waterSub.length) {
-        items.push({ type: 'text', text: 'เครื่องกรองน้ำ Subscribe: รอบบิลที่ 1–9 ราคา 99.- (ยกเว้นซื้อขาด) · ในตะกร้าที่เข้าเงื่อนไขคอมโบ เครื่องกรองน้ำลด 15%' });
+        items.push({ type: 'text', text: this.waterComboFootnote() });
       }
       if (waterSub.length) {
         items.push({ type: 'text', text: 'สินค้าเครื่องกรองน้ำ พื้นที่บริการไม่ครอบคลุมทั่วประเทศ กรุณาตรวจสอบก่อนติดตั้ง' });
