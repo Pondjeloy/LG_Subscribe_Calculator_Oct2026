@@ -1559,6 +1559,7 @@
  <p class="mb-1"><strong>หมายเหตุ:</strong></p>
  <ol style="list-style:decimal;padding-left:18px;line-height:1.7">
  <li>ราคานี้คำนวณจากเอกสารโปรโมชั่น OBS ตุลาคม 2569 · Promotion Oct_01-31 Oct 2026_Master.xlsx และ Sale Price 1–31 ต.ค. 2569 (LGETH 1 ต.ค. 2569)</li>
+ <li>แอร์ DUAL INVERTER (IXY11A / IXY13A / IXY18A / IXY24A) ใช้ราคาโปรกันยายน 2569 ตามคำสั่ง — บิลแรก 149 แล้วราคาปกติ (PromotionSep_26.xlsx ชีต GTM) · สัญญา 3 ปีเป็นราคาเต็มจาก Updated_Price3Y ไม่มีโปรบิลแรก</li>
  <li x-text="waterComboFootnote()"></li>
  <li>สินค้าเครื่องกรองน้ำ พื้นที่บริการไม่ครอบคลุมทั่วประเทศ กรุณาตรวจสอบก่อนติดตั้ง</li>
  <li x-show="isEventPromoActive()" x-text="(promoConfig.eventPromo.name || 'โปรอีเวนต์') + ' มีผล ' + fmtDate(promoConfig.eventPromo.dateStart) + ' – ' + fmtDate(promoConfig.eventPromo.dateEnd)"></li>
@@ -1765,7 +1766,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.03-v7',
+ buildVersion: '2026.10.04-v8',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2354,6 +2355,40 @@ function lgCalculator() {
           { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1799, effectiveMonthly:1799, promoMonths:0, postPromoPrice:1799, billSchedule:[{'range': 'บิล 1-36', 'price': 1799, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
           { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:1699, effectiveMonthly:1699, promoMonths:0, postPromoPrice:1699, billSchedule:[{'range': 'บิล 1-36', 'price': 1699, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 }
         ]}]},
+ 'เครื่องปรับอากาศ DUAL INVERTER': { models: [
+ { code:'IXY11A', name:'DUAL INVERTER · 9,212 BTU · เบอร์ 5', plans:[
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:849, effectiveMonthly:849, promoMonths:0, postPromoPrice:849, billSchedule:[{'range': 'บิล 1-36', 'price': 849, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:599, effectiveMonthly:599, promoMonths:0, postPromoPrice:599, billSchedule:[{'range': 'บิล 1-36', 'price': 599, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:549, effectiveMonthly:149, promoMonths:1, postPromoPrice:549, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 549, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 549/เดือน', totalContractMonths:60, totalSaving:400 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:449, effectiveMonthly:149, promoMonths:1, postPromoPrice:449, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 449, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 449/เดือน', totalContractMonths:60, totalSaving:300 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:499, effectiveMonthly:149, promoMonths:1, postPromoPrice:499, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 499, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 499/เดือน', totalContractMonths:84, totalSaving:350 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:399, effectiveMonthly:149, promoMonths:1, postPromoPrice:399, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 399, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 399/เดือน', totalContractMonths:84, totalSaving:250 }
+        ]},
+ { code:'IXY13A', name:'DUAL INVERTER · 12,283 BTU · เบอร์ 5', plans:[
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:949, effectiveMonthly:949, promoMonths:0, postPromoPrice:949, billSchedule:[{'range': 'บิล 1-36', 'price': 949, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:749, effectiveMonthly:749, promoMonths:0, postPromoPrice:749, billSchedule:[{'range': 'บิล 1-36', 'price': 749, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:599, effectiveMonthly:149, promoMonths:1, postPromoPrice:599, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 599, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 599/เดือน', totalContractMonths:60, totalSaving:450 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:499, effectiveMonthly:149, promoMonths:1, postPromoPrice:499, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 499, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 499/เดือน', totalContractMonths:60, totalSaving:350 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:549, effectiveMonthly:149, promoMonths:1, postPromoPrice:549, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 549, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 549/เดือน', totalContractMonths:84, totalSaving:400 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:449, effectiveMonthly:149, promoMonths:1, postPromoPrice:449, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 449, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 449/เดือน', totalContractMonths:84, totalSaving:300 }
+        ]},
+ { code:'IXY18A', name:'DUAL INVERTER · 18,084 BTU · เบอร์ 5', plans:[
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1149, effectiveMonthly:1149, promoMonths:0, postPromoPrice:1149, billSchedule:[{'range': 'บิล 1-36', 'price': 1149, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:899, effectiveMonthly:899, promoMonths:0, postPromoPrice:899, billSchedule:[{'range': 'บิล 1-36', 'price': 899, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:749, effectiveMonthly:149, promoMonths:1, postPromoPrice:749, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 749, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 749/เดือน', totalContractMonths:60, totalSaving:600 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:649, effectiveMonthly:149, promoMonths:1, postPromoPrice:649, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 649, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 649/เดือน', totalContractMonths:60, totalSaving:500 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:599, effectiveMonthly:149, promoMonths:1, postPromoPrice:599, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 599, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 599/เดือน', totalContractMonths:84, totalSaving:450 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:499, effectiveMonthly:149, promoMonths:1, postPromoPrice:499, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 499, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 499/เดือน', totalContractMonths:84, totalSaving:350 }
+        ]},
+ { code:'IXY24A', name:'DUAL INVERTER · 21,154 BTU · เบอร์ 5', plans:[
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1399, effectiveMonthly:1399, promoMonths:0, postPromoPrice:1399, billSchedule:[{'range': 'บิล 1-36', 'price': 1399, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'3Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:1199, effectiveMonthly:1199, promoMonths:0, postPromoPrice:1199, billSchedule:[{'range': 'บิล 1-36', 'price': 1199, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:36, totalSaving:0 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:899, effectiveMonthly:149, promoMonths:1, postPromoPrice:899, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 899, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 899/เดือน', totalContractMonths:60, totalSaving:750 },
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:799, effectiveMonthly:149, promoMonths:1, postPromoPrice:799, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-60', 'price': 799, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 799/เดือน', totalContractMonths:60, totalSaving:650 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:749, effectiveMonthly:149, promoMonths:1, postPromoPrice:749, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 749, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 749/เดือน', totalContractMonths:84, totalSaving:600 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:649, effectiveMonthly:149, promoMonths:1, postPromoPrice:649, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคา 149.-'}, {'range': 'บิล 2-84', 'price': 649, 'note': 'ราคาปกติ'}], promo:'ราคา 149.- (1 รอบบิลแรก) จากนั้น 649/เดือน', totalContractMonths:84, totalSaving:500 }
+        ]}
+ ]},
  'แอร์เชิงพาณิชย์ SAC': { models: [
  { code:'ZT4Q18GPLA1.EWGHATH', name:'Cassette 4-Way · 18k BTU', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 4 เดือน', regular:1899, effectiveMonthly:1899, promoMonths:0, postPromoPrice:1899, billSchedule:[{'range': 'บิล 1-60', 'price': 1899, 'note': 'ราคาปกติ'}], promo:'', totalContractMonths:60, totalSaving:0 },
