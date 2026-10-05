@@ -1766,7 +1766,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.04-v8',
+ buildVersion: '2026.10.05-v1',
  quoteCustomer: {
    name: '',
    address: '',
@@ -5120,18 +5120,47 @@ function lgCalculator() {
             const advAmt = Math.round(advance * qty * 100) / 100;
             periods.push({ bill: 'ล่วงหน้า', regular: advAmt, promo: advAmt, total: advAmt });
           }
+          // ลำโพง/ซาวด์บาร์: งวดที่เงินล่วงหน้าครอบแล้ว (ครึ่งราคา) ไม่ใช่ส่วนลด
+          // งวดครึ่งราคาที่ยังไม่ได้จ่ายล่วงหน้า (เช่น 7–12 เมื่อล่วงหน้า 6 เดือน) ยังคิดส่วนลดจากราคาปกติ
+          // ทีวี/มอนิเตอร์ใช้สูตรเดิม
+          const soundbarAdvance = it.category === 'ลำโพง / ซาวด์บาร์' && advance > 0;
+          const prepaidMonths = soundbarAdvance ? this.advancePrepaidMonths(it) : 0;
+          const catalogBaseByBill = soundbarAdvance
+            ? this.itemComboSchedule(it).bills.reduce((map, b) => {
+                map[b.bill] = Number(b.base) || 0;
+                return map;
+              }, {})
+            : null;
           ranges.forEach(r => {
             const promoOne = Number(r.pricePerMonth) || 0;
-            const discPer = Math.max(0, Math.round((listPrice - promoOne) * 100) / 100);
-            totalDiscountAll += discPer * (r.months || 0) * qty;
-            const bill = r.start === r.end ? String(r.start) : (r.start + '-' + r.end);
-            // คูณจำนวน: ลูกค้าเห็นยอดต่อเดือนรวม (เช่น 2 ชิ้น × ราคาโปร)
-            periods.push({
-              bill,
-              regular: listPrice * qty,
-              promo: promoOne * qty,
-              total: r.total * qty,
-            });
+            const addSlice = (start, end, regularOne, totalAmt) => {
+              const months = end - start + 1;
+              const discPer = Math.max(0, Math.round((regularOne - promoOne) * 100) / 100);
+              totalDiscountAll += discPer * months * qty;
+              periods.push({
+                bill: start === end ? String(start) : (start + '-' + end),
+                regular: regularOne * qty,
+                promo: promoOne * qty,
+                total: totalAmt,
+              });
+            };
+            const crossesPrepaid = soundbarAdvance && r.isAdvanceHalf && prepaidMonths > 0
+              && r.start <= prepaidMonths && r.end > prepaidMonths;
+            const prepaidOnly = soundbarAdvance && r.isAdvanceHalf && prepaidMonths > 0
+              && r.end <= prepaidMonths;
+            if (crossesPrepaid) {
+              const structural = catalogBaseByBill[r.start] || promoOne;
+              const preMonths = prepaidMonths - r.start + 1;
+              const full = r.total * qty;
+              const firstTotal = Math.round(promoOne * preMonths * qty * 100) / 100;
+              addSlice(r.start, prepaidMonths, structural, firstTotal);
+              addSlice(prepaidMonths + 1, r.end, listPrice, Math.round((full - firstTotal) * 100) / 100);
+            } else if (prepaidOnly) {
+              const structural = catalogBaseByBill[r.start] || promoOne;
+              addSlice(r.start, r.end, structural, r.total * qty);
+            } else {
+              addSlice(r.start, r.end, listPrice, r.total * qty);
+            }
           });
         }
         if (!periods.length) {
