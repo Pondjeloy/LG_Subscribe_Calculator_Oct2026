@@ -1766,7 +1766,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.06-v1',
+ buildVersion: '2026.10.06-v2',
  quoteCustomer: {
    name: '',
    address: '',
@@ -4109,6 +4109,8 @@ function lgCalculator() {
  },
  freeGiftWarrantyNote(item) {
    const g = this.freeGiftLabel(item);
+   // Dryer Stacking kit ไม่รับประกันของแถม — แสดงเฉพาะสิทธิ์ซื้อคู่
+   if (/stacking\s*kit/i.test(g)) return g;
    if (g) return '*ของแถมรับประกัน 1 ปี · ' + g;
    return '*ของแถมรับประกัน 1 ปี';
  },
