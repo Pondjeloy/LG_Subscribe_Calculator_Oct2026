@@ -978,7 +978,6 @@
  </div>
  <div class="text-xs" style="color:var(--ink-2);margin-top:2px" x-show="isRecommendedPlan(picker.category, entry.plan)" x-text="planRecommendNote(picker.category, entry.plan)"></div>
  <div class="text-xs text-gray-600" x-show="entry.plan.promo" x-text="planPromoDisplay(entry.plan)"></div>
- <div class="text-xs mt-1" style="color:var(--blood);font-weight:600" x-show="freeGiftLine(entry.plan)" x-text="freeGiftLine(entry.plan)"></div>
  <div class="text-xs mt-1" style="color:var(--muted)" x-show="hasFreeGift(entry.plan)" x-text="freeGiftWarrantyNote(entry.plan)"></div>
  <div class="text-xs" style="color:var(--ink);margin-top:4px" x-show="entry.plan.outright && entry.plan.advancePayment" x-text="'จ่ายครั้งเดียว ฿' + entry.plan.advancePayment.toLocaleString() + ' (รวมเครื่อง + บริการ 2 ปี)'"></div>
  <div class="text-xs" style="color:var(--ink);margin-top:4px" x-show="entry.plan.advancePayment && !entry.plan.outright" x-text="'จ่ายก้อนแรก ฿' + entry.plan.advancePayment.toLocaleString() + ' (' + tvAdvanceLabel(entry.plan) + ')'"></div>
@@ -1351,6 +1350,7 @@
  <span x-show="g.qty > 1" style="color:var(--blood);font-weight:700" x-text="' ×' + g.qty"></span>
  </div>
  <div class="truncate text-xs text-gray-600" x-text="modelDisplayName(g.item)"></div>
+ <div class="truncate text-xs" style="color:var(--muted)" x-show="hasFreeGift(g.item)" x-text="freeGiftWarrantyNote(g.item)"></div>
  <div class="text-xs text-gray-400 font-mono truncate" x-text="g.item.code"></div>
  <div class="text-xs text-gray-500" x-text="termYearsOnly(g.item) + ' · ' + serviceTypeTag(g.item.serviceType)"></div>
  </div>
@@ -1766,7 +1766,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.05-v1',
+ buildVersion: '2026.10.06-v1',
  quoteCustomer: {
    name: '',
    address: '',
@@ -4083,24 +4083,22 @@ function lgCalculator() {
    const m = this.currentModel ? this.currentModel() : null;
    return m ? String(m.freeGift || '').trim() : '';
  },
- freeGiftLine(item) {
-   const g = this.freeGiftLabel(item);
-   return g ? ('แถมฟรี ' + g) : '';
+ freeGiftPhrase(g) {
+   const t = String(g || '').trim();
+   if (!t) return '';
+   if (/แถมฟรี|รับฟรี|ซื้อคู่/.test(t)) return t;
+   return 'แถมฟรี ' + t;
  },
  modelPickerLabel(m) {
    if (!m) return '';
    let label = (m.code || '') + (m.name ? (' — ' + m.name) : '');
-   const g = String(m.freeGift || '').trim();
-   if (g && label.indexOf(g) < 0) label += ' · แถมฟรี ' + g;
+   const phrase = this.freeGiftPhrase(m.freeGift);
+   if (phrase && label.indexOf(phrase) < 0) label += ' · ' + phrase;
    return label;
  },
  modelDisplayName(item) {
    if (!item) return '';
-   const name = String(item.name || '').trim();
-   const g = this.freeGiftLabel(item);
-   if (!g) return name;
-   if (name.indexOf(g) >= 0 || name.indexOf('แถมฟรี') >= 0) return name;
-   return name ? (name + ' · แถมฟรี ' + g) : ('แถมฟรี ' + g);
+   return String(item.name || '').trim();
  },
  hasFreeGift(item) {
    if (!item) return false;
@@ -4580,8 +4578,8 @@ function lgCalculator() {
         txt += '<div><span style="font-weight:700;color:#a50034">' + (i+1) + '.</span> <strong>' + this.productSummaryTitle(it) + (qty > 1 ? (' ×' + qty) : '') + '</strong></div>';
         txt += '<span style="font-size:0.75em;background:#f3f4f6;color:#374151;padding:2px 7px;border-radius:4px;white-space:nowrap">' + this.termYearsOnly(it) + (qty > 1 ? (' · ' + qty + ' ชิ้น') : '') + '</span>';
         txt += '</div>';
-        if (this.freeGiftLine(it)) {
-          txt += '<div style="font-size:0.8em;color:#a50034;font-weight:600;margin-bottom:4px">' + this.freeGiftLine(it) + '</div>';
+        if (this.hasFreeGift(it)) {
+          txt += '<div style="font-size:0.8em;color:#6b7280;margin-bottom:4px">' + this.freeGiftWarrantyNote(it) + '</div>';
         }
         const months = it.totalContractMonths || 60;
         const years = Math.round(months / 12);
@@ -4707,7 +4705,6 @@ function lgCalculator() {
         lines.push('');
         // ชื่อรุ่นเต็ม: ประเภท · ความจุ/ชื่อ · (รหัส) — ไม่ใช้ name ดิบอย่างเดียว (เช่น "ซัก : 20 กก. อบ 10")
         lines.push((groups.length > 1 ? (i + 1) + '. ' : '') + this.productSummaryTitle(it) + (qty > 1 ? (' ×' + qty + ' ชิ้น') : ''));
-        if (this.freeGiftLine(it)) lines.push(this.freeGiftLine(it));
 
         // สัญญา + บริการ
         lines.push(
@@ -5175,9 +5172,6 @@ function lgCalculator() {
         let detailLines = '';
         detailLines += '<div class="name">' + esc(imgSrc ? titleLine : headTitle.trim()) + '</div>';
         if (pname) detailLines += '<div class="spec">' + esc(pname) + '</div>';
-        if (this.freeGiftLine(it)) {
-          detailLines += '<div class="spec" style="margin-top:2px;color:#a50034;font-weight:600">' + esc(this.freeGiftLine(it)) + '</div>';
-        }
         detailLines += careLine;
         detailLines += '<div class="pkg">' + esc(pkgLine) + '</div>';
         if (it.advancePayment > 0 && !it.outright) detailLines += '<div class="spec">' + esc(this.advanceComboFootnote(it, qty)) + '</div>';
