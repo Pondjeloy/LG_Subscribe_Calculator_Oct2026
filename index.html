@@ -1507,7 +1507,21 @@
                     @click="setQuoteShowGrandTotal(false)">ไม่แสดงยอดสุทธิ</button>
                 </div>
                 <div class="text-xs mt-1.5" :style="quoteShowGrandTotal ? 'color:#15803d' : 'color:#a50034'"
-                  x-text="quoteShowGrandTotal ? 'ใบสรุป/ใบเสนอจะมีคอลัมน์ยอดสุทธิ + แถว Total. + ยอดรวมทั้งสิ้น' : 'ไม่แสดงยอดสุทธิ/Total. ในใบแล้ว (ยังมียอดชำระครั้งแรก)'"></div>
+                  x-text="quoteShowGrandTotal ? 'ใบสรุป/ใบเสนอจะมีคอลัมน์ยอดสุทธิ + แถว Total. + ยอดรวมทั้งสิ้น' : (quotePayOnce ? 'ไม่แสดงคอลัมน์ยอดสุทธิ แต่ใบยังมียอดชำระครั้งเดียว' : 'ไม่แสดงยอดสุทธิ/Total. ในใบแล้ว (ยังมียอดชำระครั้งแรก)')"></div>
+              </div>
+              <div class="mb-3" style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff">
+                <div class="text-xs font-semibold mb-1" style="color:var(--ink)">รูปแบบการชำระในใบสรุป/ใบเสนอ</div>
+                <div class="text-xs text-gray-500 mb-2">จ่ายครั้งเดียว = รวมทุกงวดทั้งสัญญาเป็นยอดเดียว · ราคาโปรและคอมโบเท่าเดิม ไม่มีส่วนลดเพิ่ม</div>
+                <div class="flex gap-2 flex-wrap">
+                  <button type="button" class="btn-ghost" style="flex:1;min-width:120px;padding:8px 10px;font-size:12px"
+                    :style="!quotePayOnce ? 'background:var(--ink);color:#fff;border-color:var(--ink)' : ''"
+                    @click="setQuotePayOnce(false)">ผ่อนรายเดือน</button>
+                  <button type="button" class="btn-ghost" style="flex:1;min-width:120px;padding:8px 10px;font-size:12px"
+                    :style="quotePayOnce ? 'background:var(--ink);color:#fff;border-color:var(--ink)' : ''"
+                    @click="setQuotePayOnce(true)">จ่ายครั้งเดียว</button>
+                </div>
+                <div class="text-xs mt-1.5" :style="quotePayOnce ? 'color:#a50034' : 'color:#15803d'"
+                  x-text="quotePayOnce ? ('ใบนี้จ่ายครั้งเดียว ฿' + fmtMoney(grandTotal()) + ' รวมทุกงวด') : 'ใบนี้แสดงตารางผ่อนรายเดือนตามงวด'"></div>
               </div>
               <!-- ปุ่มพิมพ์/เซฟ โชว์ตลอด — ไม่ต้องเปิดฟอร์ม -->
               <div class="space-y-2">
@@ -1762,11 +1776,13 @@ function lgCalculator() {
  showQuoteForm: false,
  /** ใบสรุป/ใบเสนอ: แสดงคอลัมน์ยอดสุทธิ + แถว Total. + ยอดรวมทั้งสิ้น หรือตัดออก (default = แสดง) */
  quoteShowGrandTotal: true,
+ /** ใบสรุป/ใบเสนอ: false = ผ่อนรายเดือน · true = จ่ายครั้งเดียว (รวมทุกงวดทั้งสัญญา ราคาเดิม) */
+ quotePayOnce: false,
  showCompareModels: false,
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.06-v2',
+ buildVersion: '2026.10.07-v1',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2929,6 +2945,11 @@ function lgCalculator() {
  if (g === '0' || g === 'false') this.quoteShowGrandTotal = false;
  else if (g === '1' || g === 'true') this.quoteShowGrandTotal = true;
  } catch(e) {}
+ try {
+ const p = localStorage.getItem('lgQuotePayOnce');
+ if (p === '1' || p === 'true') this.quotePayOnce = true;
+ else if (p === '0' || p === 'false') this.quotePayOnce = false;
+ } catch(e) {}
  const shockN = this.applyShockPromoCatalog();
  if (shockN > 0) {
  try { console.info('[' + ((this.shockPromo && this.shockPromo.name) || 'SHOCK') + '] applied to', shockN, 'plans'); } catch(e) {}
@@ -2941,6 +2962,35 @@ function lgCalculator() {
  setQuoteShowGrandTotal(on) {
  this.quoteShowGrandTotal = !!on;
  try { localStorage.setItem('lgQuoteShowGrandTotal', this.quoteShowGrandTotal ? '1' : '0'); } catch(e) {}
+ },
+ /** ใบสรุป/ใบเสนอ: ผ่อนรายเดือน หรือจ่ายครั้งเดียว (ยอด = รวมทุกงวดทั้งสัญญา ไม่มีส่วนลดเพิ่ม) */
+ setQuotePayOnce(on) {
+ this.quotePayOnce = !!on;
+ try { localStorage.setItem('lgQuotePayOnce', this.quotePayOnce ? '1' : '0'); } catch(e) {}
+ },
+ quotePeriodMonths(bill) {
+ const s = String(bill == null ? '' : bill);
+ if (s.includes('-')) {
+ const p = s.split('-');
+ const a = parseInt(p[0], 10);
+ const b = parseInt(p[1], 10);
+ if (Number.isFinite(a) && Number.isFinite(b) && b >= a) return (b - a + 1);
+ }
+ return 1;
+ },
+ /** รวมแถวงวดในใบราคาเป็นแถวเดียว — ราคาโปร = ยอดที่ลูกค้าจ่ายจริงทั้งสัญญา */
+ collapsePayOncePeriods(periods) {
+ let reg = 0;
+ let tot = 0;
+ (periods || []).forEach((p) => {
+ const lump = p.bill === 'ซื้อขาด' || p.bill === 'ล่วงหน้า';
+ const months = lump ? 1 : this.quotePeriodMonths(p.bill);
+ if (p.regular !== '' && p.regular != null) reg += (Number(p.regular) || 0) * months;
+ tot += Number(p.total) || 0;
+ });
+ reg = Math.round(reg * 100) / 100;
+ tot = Math.round(tot * 100) / 100;
+ return [{ bill: 'ครั้งเดียว', regular: reg, promo: tot, total: tot }];
  },
  refreshCategoryList() {
  this.categoryList = Object.keys(this.catalog || {});
@@ -3590,6 +3640,9 @@ function lgCalculator() {
    return bits.join(' · ');
  },
  quotePaymentRemarkLines() {
+   if (this.quotePayOnce) {
+     return ['ชำระครั้งเดียว รวมทุกงวดทั้งสัญญาตามราคาโปรโมชั่นแล้ว ไม่มีส่วนลดเพิ่มจากการจ่ายทีเดียว'];
+   }
    const lines = [];
    if (this.hasTvAdvance()) {
      lines.push(this.cartTvAdvanceLabel());
@@ -4532,6 +4585,14 @@ function lgCalculator() {
       txt += '<span style="background:#f0fdf4;color:#166534;padding:2px 9px;border-radius:99px">' + this.promoDateText() + '</span>';
       txt += '</div>';
 
+      if (this.quotePayOnce) {
+        txt += '<div style="background:#a50034;color:#fff;border-radius:10px;padding:12px 14px;margin-bottom:12px">';
+        txt += '<div style="font-size:0.78em;opacity:.92">เลือกแบบจ่ายครั้งเดียว · รวมทุกงวดทั้งสัญญา</div>';
+        txt += '<div style="font-size:1.55em;font-weight:700;line-height:1.1">฿' + this.fmtMoney(this.grandTotal()) + '</div>';
+        txt += '<div style="font-size:0.78em;opacity:.92;margin-top:4px">ราคาโปรและคอมโบเท่าเดิม ไม่มีส่วนลดเพิ่ม · ใบพิมพ์จะเหลือแถวเดียวต่อสินค้า</div>';
+        txt += '</div>';
+      }
+
       // ─── First payment card ───
       txt += '<div style="background:linear-gradient(135deg,#ede9fe,#f5f3ff);border:2px solid #c4b5fd;border-radius:10px;padding:12px 14px;margin-bottom:12px">';
       txt += '<div style="font-size:0.78em;color:#6d28d9;margin-bottom:2px">ยอดชำระครั้งแรกรวม</div>';
@@ -4677,6 +4738,10 @@ function lgCalculator() {
       if (hasCombo) headerSub += ' | ' + this.quoteComboDiscountText();
       lines.push(headerSub);
 
+      if (this.quotePayOnce) {
+        lines.push('รูปแบบชำระ: จ่ายครั้งเดียว รวมทุกงวดทั้งสัญญา (ราคาโปรและคอมโบเท่าเดิม ไม่มีส่วนลดเพิ่ม)');
+        lines.push('ยอดชำระครั้งเดียว: ' + this.fmtMoney(this.grandTotal()) + ' บาท');
+      } else {
       lines.push('ยอดชำระครั้งแรกรวม: ' + this.fmtMoney(this.firstPaymentTotal()) + ' บาท');
       this.firstPaymentBreakdownGrouped().forEach(row => {
         const parts = [];
@@ -4693,6 +4758,7 @@ function lgCalculator() {
           + (parts.length ? ' (' + parts.join(' + ') + ')' : '')
         );
       });
+      }
 
       // ── EACH PRODUCT (รวมจำนวนรุ่นเดียวกัน) ──
       const groups = this.quoteGroupedItems();
@@ -4719,6 +4785,8 @@ function lgCalculator() {
         if (it.outright) {
           lines.push('ซื้อขาด');
           lines.push('ราคาซื้อขาด ' + this.fmtMoney(advance * qty) + ' บาท' + (qty > 1 ? (' (฿' + this.fmtMoney(advance) + ' × ' + qty + ')') : '') + ' (รวมเครื่อง + บริการ 2 ปี · ลด 10%)');
+        } else if (this.quotePayOnce) {
+          lines.push('ชำระครั้งเดียว รวม ' + months + ' งวด = ' + this.fmtMoney(totalItem) + ' บาท' + (qty > 1 ? (' (฿' + this.fmtMoney(totalItem / qty) + ' × ' + qty + ')') : ''));
         } else {
           lines.push((advance > 0 ? 'การชำระเงิน' : 'ค่าเช่ารายงวด') + (qty > 1 ? (' (รวม ' + qty + ' ชิ้น)') : ''));
           if (advance > 0) {
@@ -4743,7 +4811,7 @@ function lgCalculator() {
           if (advance > 0) lines.push('หมายเหตุ: ' + this.advanceComboFootnote(it, qty));
         }
 
-        if (this.quoteShowGrandTotal) {
+        if (this.quoteShowGrandTotal && !(this.quotePayOnce && !it.outright)) {
           lines.push('');
           let totalLine = (advance > 0 ? 'รวมเงินล่วงหน้าและค่างวด ' : 'รวม ') + months + ' งวด = ' + this.fmtMoney(totalItem) + ' บาท';
           if (it.totalSaving > 0) {
@@ -4795,7 +4863,7 @@ function lgCalculator() {
         }
         // ยอดผ่อนรวมทุกชิ้นต่อช่วง
         const cartRanges = this.cartBillRangeTotals();
-        if (cartRanges.segments.length) {
+        if (!this.quotePayOnce && cartRanges.segments.length) {
           lines.push('');
           lines.push('ยอดผ่อนรวมทุกชิ้นต่อช่วง');
           if (cartRanges.advance > 0) {
@@ -4813,10 +4881,11 @@ function lgCalculator() {
         if (this.hasOutright()) {
           lines.push('ซื้อขาดรวม: ' + this.totalOutright().toLocaleString() + ' บาท');
         }
-        if (this.hasTvAdvance()) {
+        if (!this.quotePayOnce && this.hasTvAdvance()) {
           lines.push('จ่ายล่วงหน้ารวม: ' + this.totalTvAdvance().toLocaleString() + ' บาท');
         }
-        lines.push('ยอดชำระครั้งแรกรวม: ' + this.fmtMoney(this.firstPaymentTotal()) + ' บาท');
+        if (!this.quotePayOnce) lines.push('ยอดชำระครั้งแรกรวม: ' + this.fmtMoney(this.firstPaymentTotal()) + ' บาท');
+        else lines.push('ยอดชำระครั้งเดียว: ' + this.fmtMoney(this.grandTotal()) + ' บาท');
         if (this.quoteShowGrandTotal) {
           if (this.totalSaving() > 0) {
             lines.push('ประหยัดรวม: ' + this.totalSaving().toLocaleString() + ' บาท');
@@ -5038,6 +5107,7 @@ function lgCalculator() {
       const autoPrint = opts.autoPrint !== false && opts.autoPrint !== 0;
       const skipFit = !!opts.exportCapture;
       const showGrand = opts.showGrandTotal !== undefined ? !!opts.showGrandTotal : !!this.quoteShowGrandTotal;
+      const payOnce = opts.payOnce !== undefined ? !!opts.payOnce : !!this.quotePayOnce;
 
       const q = this.quoteCustomer;
       const today = new Date();
@@ -5061,7 +5131,7 @@ function lgCalculator() {
       // สรุปยอดที่ลูกค้าจ่ายต่อรอบ (รวมทุกชิ้น) แยกช่วงงวด — โชว์ใต้ยอดชำระครั้งแรก
       const cartRanges = this.cartBillRangeTotals();
       let payPeriodRows = '';
-      if (cartRanges.segments.length) {
+      if (!payOnce && cartRanges.segments.length) {
         payPeriodRows += '<div class="row subhead"><span>ยอดจ่ายต่อรอบ (รวมทุกชิ้น)</span><span></span></div>';
         cartRanges.segments.forEach(r => {
           const rangeTxt = r.start === r.end
@@ -5093,7 +5163,7 @@ function lgCalculator() {
           pkgLine = 'ซื้อขาด (รวมเครื่อง + บริการ 2 ปี)';
         } else {
           // รายละเอียดบริการอยู่ที่ Care Service บรรทัดเดียว — ไม่ซ้ำที่นี่
-          pkgLine = 'สัญญา ' + years + ' ปี (' + months + ' งวด)';
+          pkgLine = 'สัญญา ' + years + ' ปี (' + months + ' งวด)' + (payOnce ? ' · ชำระครั้งเดียว รวมทุกงวด' : '');
         }
         const imgSrc = this.productImageUrl(it.code);
         // ใบสรุปราคา: Care Service แค่สาระสำคัญ 1 บรรทัด (ไม่ลิสต์อะไหล่/รายการย่อย)
@@ -5165,6 +5235,11 @@ function lgCalculator() {
         if (!periods.length) {
           periods.push({ bill: '—', regular: listPrice || '', promo: '', total: totalItem });
         }
+        if (payOnce && !it.outright) {
+          const one = this.collapsePayOncePeriods(periods);
+          periods.length = 0;
+          one.forEach((p) => periods.push(p));
+        }
         const span = periods.length + 1;
 
         // รายละเอียดสินค้า: ชื่อประเภท → รายละเอียดรุ่น → Care Service (ต่อจากรายละเอียด) → สัญญา
@@ -5176,7 +5251,7 @@ function lgCalculator() {
         if (pname) detailLines += '<div class="spec">' + esc(pname) + '</div>';
         detailLines += careLine;
         detailLines += '<div class="pkg">' + esc(pkgLine) + '</div>';
-        if (it.advancePayment > 0 && !it.outright) detailLines += '<div class="spec">' + esc(this.advanceComboFootnote(it, qty)) + '</div>';
+        if (it.advancePayment > 0 && !it.outright && !payOnce) detailLines += '<div class="spec">' + esc(this.advanceComboFootnote(it, qty)) + '</div>';
         if (this.hasFreeGift(it)) {
           detailLines += '<div class="spec" style="margin-top:2px;color:#6b7280">' + esc(this.freeGiftWarrantyNote(it)) + '</div>';
         }
@@ -5255,9 +5330,10 @@ function lgCalculator() {
         custRows += '</tr>';
       }
       if (hasVal(q.email)) custRows += '<tr><td class="lbl">E-Mail :</td><td class="val" colspan="3">' + esc(String(q.email).trim()) + '</td></tr>';
+      const payOnceMeta = payOnce ? ' · จ่ายครั้งเดียว' : '';
       const custBlock = custRows
-        ? ('<div class="cust"><table>' + custRows + '</table><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.quoteComboDiscountText()) : '') + ' · ' + this.cart.length + ' รายการ</div></div>')
-        : ('<div class="cust"><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.quoteComboDiscountText()) : '') + ' · ' + this.cart.length + ' รายการ</div></div>');
+        ? ('<div class="cust"><table>' + custRows + '</table><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.quoteComboDiscountText()) : '') + payOnceMeta + ' · ' + this.cart.length + ' รายการ</div></div>')
+        : ('<div class="cust"><div class="meta-line">' + ct + ' · ' + esc(this.promoDateText()) + (hasCombo ? ' · ' + esc(this.quoteComboDiscountText()) : '') + payOnceMeta + ' · ' + this.cart.length + ' รายการ</div></div>');
 
       // ผู้เสนอราคา — แสดงเฉพาะช่องที่มีค่า
       let sellerInfo = '';
@@ -5500,6 +5576,7 @@ ${'</'+'style>'}
           <div><b>วันที่</b> ${todayText}</div>
           <div><b>มีผลถึง</b> ${this.quoteDateText(validTo)}</div>
           <div><b>โปรแกรม</b> LG SUBSCRIBE</div>
+          ${payOnce ? '<div><b>ชำระ</b> จ่ายครั้งเดียว</div>' : ''}
         </div>
       </div>
     </div>
@@ -5513,9 +5590,9 @@ ${'</'+'style>'}
           <th style="width:90px">รุ่นสินค้า</th>
           <th style="min-width:160px">รายละเอียดสินค้า</th>
           <th style="width:44px">จำนวน</th>
-          <th style="width:52px">รอบชำระ</th>
+          <th style="width:${payOnce ? '72px' : '52px'}">${payOnce ? 'การชำระ' : 'รอบชำระ'}</th>
           <th style="width:82px">ราคาปกติ</th>
-          <th style="width:92px">ราคาโปรโมชั่น</th>
+          <th style="width:${payOnce ? '108px' : '92px'}">${payOnce ? 'จ่ายครั้งเดียว' : 'ราคาโปรโมชั่น'}</th>
           ${showGrand ? '<th style="width:84px">ยอดสุทธิ</th>' : ''}
         </tr>
       </thead>
@@ -5530,14 +5607,16 @@ ${'</'+'style>'}
         </ol>
       </div>
       <div class="sum-box">
-        <div class="row highlight"><span>ยอดชำระครั้งแรกรวม</span><span>฿${this.fmtMoney(firstPay)}</span></div>
-        ${this.hasTvAdvance() ? '<div class="row"><span>จ่ายล่วงหน้ารวม</span><span>฿' + this.fmtMoney(this.totalTvAdvance()) + '</span></div>' : ''}
-        ${this.hasOutright() ? '<div class="row"><span>ซื้อขาดรวม</span><span>฿' + this.fmtMoney(this.totalOutright()) + '</span></div>' : ''}
+        ${payOnce
+          ? '<div class="row highlight"><span>ยอดชำระครั้งเดียว<span class="en">รวมทุกงวดทั้งสัญญา</span></span><span>฿' + this.fmtMoney(grand) + '</span></div>'
+          : '<div class="row highlight"><span>ยอดชำระครั้งแรกรวม</span><span>฿' + this.fmtMoney(firstPay) + '</span></div>'}
+        ${!payOnce && this.hasTvAdvance() ? '<div class="row"><span>จ่ายล่วงหน้ารวม</span><span>฿' + this.fmtMoney(this.totalTvAdvance()) + '</span></div>' : ''}
+        ${!payOnce && this.hasOutright() ? '<div class="row"><span>ซื้อขาดรวม</span><span>฿' + this.fmtMoney(this.totalOutright()) + '</span></div>' : ''}
         ${payPeriodRows}
-        ${showGrand ? (
-          (hasCombo ? '<div class="row"><span>ส่วนลด ' + esc(this.quoteComboDiscountText()) + '</span><span>−฿' + this.fmtMoney(this.grandTotalSaving()) + '</span></div>' : '')
-          + '<div class="row"><span>ส่วนลดทั้งหมด</span><span>฿' + this.fmtMoney(totalDiscountAll) + '</span></div>'
-          + '<div class="row grand"><span>ยอดรวมทั้งสิ้น</span><span>฿' + this.fmtMoney(grand) + '</span></div>'
+        ${(showGrand || payOnce) ? (
+          (showGrand && hasCombo ? '<div class="row"><span>ส่วนลด ' + esc(this.quoteComboDiscountText()) + '</span><span>−฿' + this.fmtMoney(this.grandTotalSaving()) + '</span></div>' : '')
+          + (showGrand ? '<div class="row"><span>ส่วนลดทั้งหมด</span><span>฿' + this.fmtMoney(totalDiscountAll) + '</span></div>' : '')
+          + (showGrand ? '<div class="row grand"><span>ยอดรวมทั้งสิ้น</span><span>฿' + this.fmtMoney(grand) + '</span></div>' : '')
           + '<div class="baht">฿ BAHT : ' + esc(this.bahtText(grand)) + '</div>'
         ) : ''}
       </div>
@@ -5897,9 +5976,10 @@ ${'</'+'html>'}`;
       w.document.open();
       w.document.write(html);
       w.document.close();
+      const payOnceNote = this.quotePayOnce ? ' · จ่ายครั้งเดียว' : '';
       this.showToast(this.isMobileClient()
-        ? ('เปิด' + label + 'แล้ว — กดปุ่มพิมพ์/บันทึก PDF ในหน้านั้น' + (this.quoteShowGrandTotal ? '' : ' · ไม่แสดงยอดสุทธิ'))
-        : ('เปิด' + label + 'แล้ว — กดพิมพ์หรือบันทึกเป็น PDF' + (this.quoteShowGrandTotal ? '' : ' · ไม่แสดงยอดสุทธิ')));
+        ? ('เปิด' + label + 'แล้ว — กดปุ่มพิมพ์/บันทึก PDF ในหน้านั้น' + (this.quoteShowGrandTotal ? '' : ' · ไม่แสดงยอดสุทธิ') + payOnceNote)
+        : ('เปิด' + label + 'แล้ว — กดพิมพ์หรือบันทึกเป็น PDF' + (this.quoteShowGrandTotal ? '' : ' · ไม่แสดงยอดสุทธิ') + payOnceNote));
     },
 
     async loadHtml2Canvas() {
