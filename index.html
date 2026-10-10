@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.10-v1 · โปรตุลาคม 2569 · Subscribe Day 3–18 ต.ค. · Price list Oct_V2 -->
+<!-- LG Subscribe Calculator build 2026.10.10-v2 · โปรตุลาคม 2569 · หมายเหตุใบเสนอเหลือช่วงโปร + เงื่อนไขบริษัท -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -1793,7 +1793,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.10-v1',
+ buildVersion: '2026.10.10-v2',
  quoteCustomer: {
    name: '',
    address: '',
@@ -5034,31 +5034,19 @@ function lgCalculator() {
       return 'สงวนสิทธิ์' + titleTh + 'ไว้จนถึงวันที่ ' + dateTxt;
     },
     quoteRemarkItems(titleTh) {
+      // ใบเสนอ/ใบสรุป: เหลือแค่ช่วงโปรที่ใช้จริง + เงื่อนไขบริษัท (user 10 ต.ค. 2569)
       const items = [];
-      items.push({ type: 'text', text: this.quoteValidityLine(titleTh) });
-      items.push({ type: 'text', text: 'ราคาอ้างอิง Promotion Oct_01-31 Oct 2026_Master.xlsx และ Sale Price 1–31 ต.ค. 2569' });
-      items.push({ type: 'text', text: 'ราคารวมค่าจัดส่งและค่าติดตั้งเบื้องต้นเรียบร้อยแล้ว (พื้นที่มาตรฐานตามบริษัท)' });
-      const ev = this.promoConfig && this.promoConfig.eventPromo;
-      if (this.isEventPromoActive() && ev && ev.note) {
-        items.push({ type: 'text', text: ev.name + ': ' + ev.note });
-      }
-      const waterSub = (this.cart || []).filter(it => (it.category === 'เครื่องกรองน้ำ') && !it.outright);
-      if (waterSub.length) {
-        items.push({ type: 'text', text: this.waterComboFootnote() });
-      }
-      if (waterSub.length) {
-        items.push({ type: 'text', text: 'สินค้าเครื่องกรองน้ำ พื้นที่บริการไม่ครอบคลุมทั่วประเทศ กรุณาตรวจสอบก่อนติดตั้ง' });
-      }
-      if ((this.cart || []).some(it => String(it.code || '') === 'RX10VHP3KR.AEBPETH')) {
-        items.push({ type: 'text', text: 'เครื่องอบผ้า RX10VHP3KR โปรตุลาคม 2569: ซื้อคู่ FV1413S4M.AMBPETH รับฟรี Dryer Stacking kit หรือจนกว่าของแถมจะหมด' });
-      }
-      (this.installRemarkLinesForCart() || []).forEach((block) => {
-        if (block && block.length) items.push({ type: 'block', lines: block });
-      });
-      (this.quotePaymentRemarkLines() || []).forEach((line) => {
-        if (line) items.push({ type: 'text', text: line });
-      });
-      items.push({ type: 'text', text: 'เงื่อนไขเป็นไปตามที่บริษัทฯ กำหนด และราคาอาจเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า' });
+      const specialOn = this.isSpecialComboEffective();
+      const promo = specialOn
+        ? (this.promoConfig && this.promoConfig.special)
+        : (this.promoConfig && this.promoConfig.normal);
+      const start = this.fmtDate((promo && promo.dateStart) || '');
+      const end = this.fmtDate((promo && promo.dateEnd) || '');
+      const label = specialOn
+        ? ('โปร ' + (String((promo && promo.name) || '').trim() || 'พิเศษ'))
+        : 'โปรเดือนปกติ';
+      if (start && end) items.push({ type: 'text', text: label + ' เริ่ม ' + start + ' หมด ' + end });
+      items.push({ type: 'text', text: 'เงื่อนไขเป็นไปตามที่บริษัทกำหนด' });
       return items;
     },
     quoteRemarkHtml(titleTh) {
