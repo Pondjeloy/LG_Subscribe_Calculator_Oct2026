@@ -1293,10 +1293,10 @@
  <div class="bill-step-price" x-text="'฿' + fmtBillPrice(seg.price * g.qty)"></div>
  <div class="bill-step-note">
  <span x-show="g.qty > 1" x-text="'฿' + fmtBillPrice(seg.price) + ' × ' + g.qty"></span>
- <span x-show="comboRate() > 0 && g.item.advancePayment && !g.item.outright" x-text="(g.qty > 1 ? ' · ' : '') + advanceComboPeriodNote(g.item, { start: seg.start, end: seg.end, isCycledAdvance: seg.start === 7 && seg.end === 12, isAdvanceHalf: seg.end <= 12 })"></span>
+ <span x-show="g.item.advancePayment && !g.item.outright" x-text="(g.qty > 1 ? ' · ' : '') + billStepNote(g.item, seg)"></span>
  <span x-show="comboRate() > 0 && !g.item.advancePayment && seg.base !== seg.price" x-text="(g.qty > 1 ? ' · ' : '') + 'ราคาเต็ม ฿' + fmtBillPrice(seg.base * g.qty) + ' − combo'"></span>
  <span x-show="comboRate() > 0 && seg.start === 1 && !g.item.advancePayment" style="color:var(--ink)">บิลแรกเก็บเต็ม*</span>
- <span x-show="comboRate() === 0" x-text="dc24AdvanceNote(g.item, seg.start, seg.end) || (billRangeTotals(g.item).find(r => r.start === seg.start)?.isAdvanceHalf ? tvHalfPeriodNote(g.item) : (seg.base !== g.item.postPromoPrice ? 'ช่วงโปร' : 'ราคาปกติ'))"></span>
+ <span x-show="comboRate() === 0 && !(g.item.advancePayment && !g.item.outright)" x-text="seg.base !== g.item.postPromoPrice ? 'ช่วงโปร' : 'ราคาปกติ'"></span>
  </div>
  </div>
  </template>
@@ -1790,7 +1790,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.13-v8',
+ buildVersion: '2026.10.13-v9',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2024,7 +2024,7 @@ function lgCalculator() {
  });
  }
  this.billRangeTotals(item).forEach(r => {
- const split = this.dc24AdvanceNote(item, r.start, r.end);
+ const split = this.advanceKindParen(item, r.start, r.end);
  let note = this.advanceComboPeriodNote(item, r);
  if (split) note = note ? (split + ' · ' + note) : split;
  else if (!note) {
@@ -3617,10 +3617,34 @@ function lgCalculator() {
      return sa <= a && sb >= b && Number(seg.price) === half;
    });
    if (!hit(1, 24) || !hit(25, 30)) return '';
-   if (start <= 24 && end >= 25) return '(1-24M โปร50%) 25-30 Advance50% 6M';
-   if (end <= 24) return '1-24M โปร50%';
-   if (start >= 25 && end <= 30) return '25-30 Advance50% 6M';
+   if (start <= 24 && end >= 25) return '(1-24M โปร50%) (25-30 Advance50% 6M)';
+   if (end <= 24) return '(โปร50%)';
+   if (start >= 25 && end <= 30) return '(Advance)';
    return '';
+ },
+ /** วงเล็บใต้ค่างวด: โปร 50% กับ Advance — Grab/STAGE301 ใช้ช่วงเดือนของตัวเอง */
+ advanceKindParen(item, start, end) {
+   const dc = this.dc24AdvanceNote(item, start, end);
+   if (dc) return dc;
+   if (!item || item.outright || !(item.advancePayment > 0)) return '';
+   const halfEnd = this.tvHalfPriceEnd(item) || 12;
+   if (end < 1 || start > halfEnd) return '';
+   const prepaid = this.advancePrepaidMonths(item);
+   if (prepaid >= 12 && end <= halfEnd) return '(โปร50%) (Advance)';
+   if (prepaid === 6 && start <= 12 && end >= 7 && start <= halfEnd) return '(โปร50%) (Advance)';
+   if (end <= halfEnd) return '(โปร50%)';
+   return '';
+ },
+ billStepNote(item, seg) {
+   if (!item || !seg) return '';
+   const paren = this.advanceKindParen(item, seg.start, seg.end);
+   const combo = (this.comboRate() > 0 && item.advancePayment > 0 && !item.outright)
+     ? this.advanceComboPeriodNote(item, { start: seg.start, end: seg.end })
+     : '';
+   if (paren && combo) return paren + ' · ' + combo;
+   if (paren || combo) return paren || combo;
+   if (seg.base !== item.postPromoPrice) return 'ช่วงโปร';
+   return 'ราคาปกติ';
  },
  /** ป้ายงวด TV+combo — ห้ามติด «ลด 50%» แบบโปร DC */
  advanceComboPeriodNote(item, r) {
@@ -3634,12 +3658,12 @@ function lgCalculator() {
  },
  advanceComboFootnote(item, qty) {
    const adv = ((item && item.advancePayment) || 0) * (qty || 1);
-   const head = 'จ่ายครั้งแรก ฿' + this.fmtMoney(adv) + ' เป็นเงินล่วงหน้า ไม่รวมค่างวดที่ 1';
-   if (this.comboRate() <= 0) return head + ' จากนั้นชำระรายเดือนตามตาราง';
+   const head = 'จ่ายครั้งแรก ฿' + this.fmtMoney(adv) + ' เป็นเงินล่วงหน้า (Advance) ไม่รวมค่างวดที่ 1';
+   if (this.comboRate() <= 0) return head + ' จากนั้นชำระรายเดือน (โปร50%) ตามตาราง';
    const extra = this.advancePrepaidMonths(item) === 6
      ? ' ส่วนลดคอมโบของเงินล่วงหน้านำไปลดเพิ่มในงวด 7–12'
      : ' งวด 1–12 ใช้ส่วนลดคอมโบอัตราเดียวกัน';
-   return head + ' เงินล่วงหน้าไม่หักคอมโบ' + extra + ' ราคาค่างวดที่แสดงหักส่วนลดแล้ว ไม่ต้องหักซ้ำ';
+   return head + ' เงินล่วงหน้าไม่หักคอมโบ' + extra + ' ราคาค่างวดที่แสดง (โปร50%) หักส่วนลดแล้ว ไม่ต้องหักซ้ำ';
  },
  /** หมายเหตุท้ายเครื่อง / กล่องหมายเหตุในใบ — ไม่แปะซ้ำใต้ตารางบิลหรือแถวสินค้า */
  advanceComboRemarkLines() {
@@ -3975,7 +3999,7 @@ function lgCalculator() {
           let label = r.rangeLabel;
           let tag = '';
           const comboNote = this.advanceComboPeriodNote(it, r);
-          const splitNote = this.dc24AdvanceNote(it, r.start, r.end);
+          const splitNote = this.advanceKindParen(it, r.start, r.end);
           if (splitNote) {
             tag = ' <span style="color:#6b7280;font-size:10px;font-weight:500">' + splitNote + '</span>';
             if (comboNote) tag += ' <span style="color:#7c3aed;font-size:10px;font-weight:600">(' + comboNote + ')</span>';
@@ -4865,7 +4889,7 @@ function lgCalculator() {
           ranges.forEach(r => {
             let tag = '';
             const comboNote = this.advanceComboPeriodNote(it, r);
-            const splitNote = this.dc24AdvanceNote(it, r.start, r.end);
+            const splitNote = this.advanceKindParen(it, r.start, r.end);
             if (splitNote && comboNote) tag = splitNote + ' (' + comboNote + ')';
             else if (splitNote) tag = splitNote;
             else if (comboNote) tag = '(' + comboNote + ')';
@@ -5202,7 +5226,7 @@ function lgCalculator() {
             : ('งวดที่ ' + r.start + '–' + r.end);
           let monthNote = r.months > 1 ? (' · ' + r.months + ' งวด') : '';
           const contributors = this.cart.filter(it => !it.outright && (it.totalContractMonths || 60) >= r.start);
-          const splitNotes = contributors.map(it => this.dc24AdvanceNote(it, r.start, r.end));
+          const splitNotes = contributors.map(it => this.advanceKindParen(it, r.start, r.end));
           const uniqueSplit = [...new Set(splitNotes.filter(Boolean))];
           if (uniqueSplit.length === 1 && splitNotes.length && splitNotes.every(n => n === uniqueSplit[0])) {
             monthNote = ' · ' + uniqueSplit[0];
