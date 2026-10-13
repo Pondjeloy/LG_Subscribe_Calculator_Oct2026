@@ -1588,7 +1588,7 @@
  <div x-text="line"></div>
  </template>
  </li>
- <li>เงื่อนไขเป็นไปตามที่บริษัทฯ กำหนด และราคาอาจเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า</li>
+ <li>เงื่อนไขเป็นไปตามที่บริษัทกำหนด และอาจมีการเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า</li>
  </ol>
  </div>
  </div>
@@ -1788,7 +1788,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.13-v5',
+ buildVersion: '2026.10.13-v6',
  quoteCustomer: {
    name: '',
    address: '',
@@ -2321,43 +2321,43 @@ function lgCalculator() {
  
  
  
- { code:'SAQ13A.S11', name:'DUALCOOL SAQ13A.S11', plans:[
+ { code:'SAQ13A.S11', name:'DUALCOOL · 12,000 BTU · เบอร์ 5 · 5 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:949, effectiveMonthly:149, promoMonths:1, postPromoPrice:949, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 474, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 949, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (474) จากนั้น 949/เดือน', totalContractMonths:60, totalSaving:3175 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:799, effectiveMonthly:149, promoMonths:1, postPromoPrice:799, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 399, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 799, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (399) จากนั้น 799/เดือน', totalContractMonths:84, totalSaving:2650 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:849, effectiveMonthly:149, promoMonths:1, postPromoPrice:849, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 424, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 849, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (424) จากนั้น 849/เดือน', totalContractMonths:60, totalSaving:2825 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:699, effectiveMonthly:149, promoMonths:1, postPromoPrice:699, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 349, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 699, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (349) จากนั้น 699/เดือน', totalContractMonths:84, totalSaving:2300 }
         ]},
- { code:'SAQ18B.S21', name:'DUALCOOL · เบอร์ 5 · 4 Star · WiFi', plans:[
+ { code:'SAQ18B.S21', name:'DUALCOOL · 18,084 BTU · เบอร์ 5 · 4 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1149, effectiveMonthly:149, promoMonths:1, postPromoPrice:1149, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 574, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 1149, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (574) จากนั้น 1,149/เดือน', totalContractMonths:60, totalSaving:3875 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:949, effectiveMonthly:149, promoMonths:1, postPromoPrice:949, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 474, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 949, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (474) จากนั้น 949/เดือน', totalContractMonths:84, totalSaving:3175 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:1049, effectiveMonthly:149, promoMonths:1, postPromoPrice:1049, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 524, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 1049, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (524) จากนั้น 1,049/เดือน', totalContractMonths:60, totalSaving:3525 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:849, effectiveMonthly:149, promoMonths:1, postPromoPrice:849, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 424, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 849, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (424) จากนั้น 849/เดือน', totalContractMonths:84, totalSaving:2825 }
         ]},
- { code:'SAQ24B.S21', name:'DUALCOOL · เบอร์ 5 · 3 Star · WiFi', plans:[
+ { code:'SAQ24B.S21', name:'DUALCOOL · 24,225 BTU · เบอร์ 5 · 3 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1299, effectiveMonthly:149, promoMonths:1, postPromoPrice:1299, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 649, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 1299, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (649) จากนั้น 1,299/เดือน', totalContractMonths:60, totalSaving:4400 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1049, effectiveMonthly:149, promoMonths:1, postPromoPrice:1049, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 524, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 1049, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (524) จากนั้น 1,049/เดือน', totalContractMonths:84, totalSaving:3525 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:1199, effectiveMonthly:149, promoMonths:1, postPromoPrice:1199, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 599, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 1199, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (599) จากนั้น 1,199/เดือน', totalContractMonths:60, totalSaving:4050 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:949, effectiveMonthly:149, promoMonths:1, postPromoPrice:949, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 474, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 949, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (474) จากนั้น 949/เดือน', totalContractMonths:84, totalSaving:3175 }
         ]},
- { code:'SIQ11B.S01', name:'DUALCOOL · เบอร์ 5 · 1 Star · WiFi', plans:[
+ { code:'SIQ11B.S01', name:'DUALCOOL · 9,212 BTU · เบอร์ 5 · 1 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:699, effectiveMonthly:149, promoMonths:1, postPromoPrice:699, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 349, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 699, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (349) จากนั้น 699/เดือน', totalContractMonths:60, totalSaving:2300 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:599, effectiveMonthly:149, promoMonths:1, postPromoPrice:599, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 299, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 599, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (299) จากนั้น 599/เดือน', totalContractMonths:84, totalSaving:1950 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:599, effectiveMonthly:149, promoMonths:1, postPromoPrice:599, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 299, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 599, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (299) จากนั้น 599/เดือน', totalContractMonths:60, totalSaving:1950 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:499, effectiveMonthly:149, promoMonths:1, postPromoPrice:499, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 249, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 499, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (249) จากนั้น 499/เดือน', totalContractMonths:84, totalSaving:1600 }
         ]},
- { code:'SIQ13B.S01', name:'DUALCOOL SIQ13B.S01', plans:[
+ { code:'SIQ13B.S01', name:'DUALCOOL · 12,283 BTU · เบอร์ 5 · 1 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:799, effectiveMonthly:149, promoMonths:1, postPromoPrice:799, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 399, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 799, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (399) จากนั้น 799/เดือน', totalContractMonths:60, totalSaving:2650 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:699, effectiveMonthly:149, promoMonths:1, postPromoPrice:699, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 349, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 699, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (349) จากนั้น 699/เดือน', totalContractMonths:84, totalSaving:2300 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:699, effectiveMonthly:149, promoMonths:1, postPromoPrice:699, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 349, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 699, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (349) จากนั้น 699/เดือน', totalContractMonths:60, totalSaving:2300 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:549, effectiveMonthly:149, promoMonths:1, postPromoPrice:549, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 274, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 549, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (274) จากนั้น 549/เดือน', totalContractMonths:84, totalSaving:1775 }
         ]},
- { code:'SIQ18B.S11', name:'DUALCOOL SIQ18B.S11', plans:[
+ { code:'SIQ18B.S11', name:'DUALCOOL · 18,084 BTU · เบอร์ 5 · 1 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:999, effectiveMonthly:149, promoMonths:1, postPromoPrice:999, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 499, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 999, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (499) จากนั้น 999/เดือน', totalContractMonths:60, totalSaving:3350 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:849, effectiveMonthly:149, promoMonths:1, postPromoPrice:849, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 424, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 849, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (424) จากนั้น 849/เดือน', totalContractMonths:84, totalSaving:2825 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:899, effectiveMonthly:149, promoMonths:1, postPromoPrice:899, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 449, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 899, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (449) จากนั้น 899/เดือน', totalContractMonths:60, totalSaving:3000 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:699, effectiveMonthly:149, promoMonths:1, postPromoPrice:699, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 349, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 699, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (349) จากนั้น 699/เดือน', totalContractMonths:84, totalSaving:2300 }
         ]},
- { code:'SIQ24B.S11', name:'DUALCOOL SIQ24B.S11', plans:[
+ { code:'SIQ24B.S11', name:'DUALCOOL · 22,178 BTU · เบอร์ 5 · 1 Star · WiFi', plans:[
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:1199, effectiveMonthly:149, promoMonths:1, postPromoPrice:1199, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 599, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 1199, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (599) จากนั้น 1,199/เดือน', totalContractMonths:60, totalSaving:4050 },
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 6 เดือน', regular:999, effectiveMonthly:149, promoMonths:1, postPromoPrice:999, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 499, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 999, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (499) จากนั้น 999/เดือน', totalContractMonths:84, totalSaving:3350 },
           { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:1099, effectiveMonthly:149, promoMonths:1, postPromoPrice:1099, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 549, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 1099, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (549) จากนั้น 1,099/เดือน', totalContractMonths:60, totalSaving:3700 },
@@ -5054,7 +5054,7 @@ function lgCalculator() {
         : 'โปรเดือนปกติ';
       if (start && end) items.push({ type: 'text', text: label + ' เริ่ม ' + start + ' หมด ' + end });
       if (this.cartHasRacAs35Gift()) items.push({ type: 'block', lines: this.racAs35GiftLines() });
-      items.push({ type: 'text', text: 'เงื่อนไขเป็นไปตามที่บริษัทกำหนด' });
+      items.push({ type: 'text', text: 'เงื่อนไขเป็นไปตามที่บริษัทกำหนด และอาจมีการเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า' });
       return items;
     },
     quoteRemarkHtml(titleTh) {
