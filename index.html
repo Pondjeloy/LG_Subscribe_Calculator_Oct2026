@@ -1583,7 +1583,11 @@
  <li x-show="hasTvAdvance()" x-text="cartTvAdvanceLabel()"></li>
  <li x-show="cart.length === 0 || cartHasSubscribeItem()">โปรโมชั่นใช้ได้เฉพาะแบบ Subscribe</li>
  <li x-show="cart.length > 0">ราคารวมค่าจัดส่งและค่าติดตั้งเบื้องต้นเรียบร้อยแล้ว (พื้นที่มาตรฐานตามบริษัท)</li>
- <li x-text="racAs35GiftNote()"></li>
+ <li>
+ <template x-for="(line, ri) in racAs35GiftLines()" :key="'rac-as35-' + ri">
+ <div x-text="line"></div>
+ </template>
+ </li>
  <li>เงื่อนไขเป็นไปตามที่บริษัทฯ กำหนด และราคาอาจเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า</li>
  </ol>
  </div>
@@ -1784,7 +1788,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.13-v4',
+ buildVersion: '2026.10.13-v5',
  quoteCustomer: {
    name: '',
    address: '',
@@ -4117,8 +4121,11 @@ function lgCalculator() {
  },
  // ของแถม (แถมฟรี) — รับประกัน 1 ปี แสดงเฉพาะเมื่อมีของแถมจริงเท่านั้น
  // ห้ามโชว์ *ของแถมรับประกัน 1 ปี ถ้าไม่มีแถม
- racAs35GiftNote() {
-   return '*ของแถมรับประกัน 1 ปี · ซื้อ RAC 2 เครื่องขึ้นไป แถมเครื่องฟอกอากาศ AS35GGW10.ATH (จำกัด 100 สิทธิ์ · ไม่ร่วม ARTCOOL Buy 1 Get 1)';
+ racAs35GiftLines() {
+   return [
+     '· เมื่อซื้อ RAC 2 เครื่องขึ้นไป แถมเครื่องฟอกอากาศ AS35GGW10.ATH (จำกัด 100 สิทธิ์ · ไม่ร่วม ARTCOOL Buy 1 Get 1)',
+     '*ของแถมรับประกัน 1 ปี'
+   ];
  },
  isRacAs35BundleGift(text) {
    const t = String(text || '');
@@ -5046,7 +5053,7 @@ function lgCalculator() {
         ? ('โปร ' + (String((promo && promo.name) || '').trim() || 'พิเศษ'))
         : 'โปรเดือนปกติ';
       if (start && end) items.push({ type: 'text', text: label + ' เริ่ม ' + start + ' หมด ' + end });
-      if (this.cartHasRacAs35Gift()) items.push({ type: 'text', text: this.racAs35GiftNote() });
+      if (this.cartHasRacAs35Gift()) items.push({ type: 'block', lines: this.racAs35GiftLines() });
       items.push({ type: 'text', text: 'เงื่อนไขเป็นไปตามที่บริษัทกำหนด' });
       return items;
     },
