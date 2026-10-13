@@ -1301,9 +1301,6 @@
  </div>
  </template>
  </div>
- <div class="text-xs text-gray-400 mt-2" x-show="g.item.advancePayment && comboRate() > 0" style="font-style:italic">
- * <span x-text="advanceComboFootnote(g.item, g.qty)"></span>
- </div>
  <div class="text-xs text-gray-400 mt-2" x-show="!g.item.advancePayment && comboRate() > 0" style="font-style:italic">
  * บิลแรกเก็บเต็ม (ยังไม่หัก combo) แล้วนำ combo <span x-text="comboRateText()"></span> ของบิลแรกไปลดทั้งหมดที่งวดที่ 2
  </div>
@@ -1581,6 +1578,11 @@
  <li x-show="isSpecialComboEffective()" x-text="'โปร ' + (promoConfig.special.name || 'Combo') + ' มีผลถึง ' + fmtDate(promoConfig.special.dateEnd)"></li>
  <li x-show="!isSpecialComboEffective()" x-text="'โปรเดือนปกติมีผลถึง ' + fmtDate(promoConfig.normal.dateEnd)"></li>
  <li x-show="hasTvAdvance()" x-text="cartTvAdvanceLabel()"></li>
+ <li x-show="hasTvAdvance()">
+ <template x-for="(line, ai) in advanceComboRemarkLines()" :key="'adv-note-' + ai">
+ <div x-text="line"></div>
+ </template>
+ </li>
  <li x-show="cart.length === 0 || cartHasSubscribeItem()">โปรโมชั่นใช้ได้เฉพาะแบบ Subscribe</li>
  <li x-show="cart.length > 0">ราคารวมค่าจัดส่งและค่าติดตั้งเบื้องต้นเรียบร้อยแล้ว (พื้นที่มาตรฐานตามบริษัท)</li>
  <li>
@@ -1788,7 +1790,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.13-v7',
+ buildVersion: '2026.10.13-v8',
  quoteCustomer: {
    name: '',
    address: '',
@@ -3639,6 +3641,14 @@ function lgCalculator() {
      : ' งวด 1–12 ใช้ส่วนลดคอมโบอัตราเดียวกัน';
    return head + ' เงินล่วงหน้าไม่หักคอมโบ' + extra + ' ราคาค่างวดที่แสดงหักส่วนลดแล้ว ไม่ต้องหักซ้ำ';
  },
+ /** หมายเหตุท้ายเครื่อง / กล่องหมายเหตุในใบ — ไม่แปะซ้ำใต้ตารางบิลหรือแถวสินค้า */
+ advanceComboRemarkLines() {
+   const groups = this.tvAdvanceItemsGrouped();
+   return groups.map(g => {
+     const note = this.advanceComboFootnote(g.item, g.qty);
+     return groups.length > 1 ? (g.item.code + ': ' + note) : note;
+   });
+ },
  cartAdvanceComboIntro() {
    const bits = ['ค่างวดในตารางหักส่วนลดคอมโบ ' + this.comboRateText() + ' แล้ว ไม่ต้องหักซ้ำ'];
    if (this.hasTvAdvance()) bits.push('ทีวี จอมอนิเตอร์ และเครื่องเสียง: จ่ายเงินล่วงหน้าครั้งแรกตามยอดที่ระบุ แล้วชำระรายเดือนแยกตามช่วงงวด');
@@ -4725,7 +4735,6 @@ function lgCalculator() {
             txt += '<strong style="color:' + (line.kind === 'advance' ? '#7c3aed' : '#a50034') + ';white-space:nowrap">' + priceShow + '</strong>';
             txt += '</div>';
           });
-          if (it.advancePayment > 0) txt += '<div style="margin-top:5px;font-size:0.8em;color:#6b7280">' + this.advanceComboFootnote(it, qty) + '</div>';
           if (it.totalSaving > 0) {
             txt += '<div style="margin-top:2px;font-size:0.8em;color:#15803d">ประหยัด ฿' + (it.totalSaving * qty).toLocaleString() + (qty > 1 ? (' (฿' + it.totalSaving.toLocaleString() + ' × ' + qty + ')') : '') + '</div>';
           }
@@ -4871,7 +4880,6 @@ function lgCalculator() {
             const qtyNote = qty > 1 ? (' (฿' + this.fmtBillPrice(unitPrice) + ' × ' + qty + ')') : '';
             lines.push('  ' + r.rangeLabel + (tag ? ' ' + pricePart : pricePart) + qtyNote);
           });
-          if (advance > 0) lines.push('หมายเหตุ: ' + this.advanceComboFootnote(it, qty));
         }
 
         if (this.quoteShowGrandTotal && !(this.quotePayOnce && !it.outright)) {
@@ -5099,6 +5107,9 @@ function lgCalculator() {
         : 'โปรเดือนปกติ';
       if (start && end) items.push({ type: 'text', text: label + ' เริ่ม ' + start + ' หมด ' + end });
       if (this.cartHasRacAs35Gift()) items.push({ type: 'block', lines: this.racAs35GiftLines() });
+      if (!this.quotePayOnce) {
+        this.advanceComboRemarkLines().forEach((text) => items.push({ type: 'text', text }));
+      }
       items.push({ type: 'text', text: 'เงื่อนไขเป็นไปตามที่บริษัทกำหนด และอาจมีการเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า' });
       return items;
     },
@@ -5309,7 +5320,6 @@ function lgCalculator() {
         if (pname) detailLines += '<div class="spec">' + esc(pname) + '</div>';
         detailLines += careLine;
         detailLines += '<div class="pkg">' + esc(pkgLine) + '</div>';
-        if (it.advancePayment > 0 && !it.outright && !payOnce) detailLines += '<div class="spec">' + esc(this.advanceComboFootnote(it, qty)) + '</div>';
         if (this.hasFreeGift(it)) {
           detailLines += '<div class="spec" style="margin-top:2px;color:#6b7280">' + esc(this.freeGiftWarrantyNote(it)) + '</div>';
         }
