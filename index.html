@@ -1369,11 +1369,17 @@
  </div>
  <div class="flex justify-between" style="color:var(--ink)" x-show="comboRate() > 0">
  <span class="font-semibold">
- <span x-text="'ส่วนลด ' + quoteComboDiscountText()"></span>
+ <span x-text="'ส่วนลด ' + quoteComboDiscountText() + ' ทั้งสัญญา'"></span>
  <span x-show="isSpecialComboEffective()" class="tag tag-recommend" style="margin-left:4px">SPECIAL</span>
  </span>
- <span class="font-mono font-semibold" x-text="'-฿' + comboDiscount().toLocaleString()"></span>
+ <span class="font-mono font-semibold" x-text="'-฿' + grandTotalSaving().toLocaleString()"></span>
  </div>
+ <template x-for="(row, i) in comboSavingRows()" :key="'cso-' + row.code + '-' + i">
+ <div class="flex justify-between text-xs" style="color:var(--muted);padding-left:8px">
+ <span x-text="row.label + (row.qty > 1 ? (' ×' + row.qty) : '')"></span>
+ <span class="font-mono" x-text="'-฿' + row.saving.toLocaleString()"></span>
+ </div>
+ </template>
  <div x-show="cart.length > 0 && comboRate() === 0" class="text-xs text-gray-500 italic">
  <span x-text="'* เพิ่มสินค้าอีก ' + (minTierItems() - cart.length) + ' ชิ้นเพื่อรับส่วนลด ' + comboLabel() + ' ' + minTierRate() + '%'"></span>
  </div>
@@ -1459,6 +1465,12 @@
  <span x-text="'ประหยัดจาก ' + comboLabel()"></span>
  <span x-text="'-฿' + fmtMoney(grandTotalSaving())"></span>
  </div>
+ <template x-for="(row, i) in comboSavingRows()" :key="'gsv-' + row.code + '-' + i">
+ <div class="flex justify-between text-xs" style="color:rgba(255,255,255,.62);margin-top:1px;padding-left:8px">
+ <span x-text="row.label + (row.qty > 1 ? (' ×' + row.qty) : '')"></span>
+ <span x-text="'-฿' + fmtMoney(row.saving)"></span>
+ </div>
+ </template>
  </div>
  </div>
 
@@ -1790,7 +1802,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.13-v9',
+ buildVersion: '2026.10.15-v1',
  quoteCustomer: {
    name: '',
    address: '',
@@ -3832,15 +3844,23 @@ function lgCalculator() {
  }
  } else {
  // === สินค้า Subscribe ทั่วไป (ไม่มี Advance) ===
- // บิลแรกเก็บเต็ม (ไม่หัก combo) แล้วนำ combo ของบิลแรกไปลดทั้งหมดที่งวดที่ 2
- const bill1Combo = (months > 1 && cr > 0) ? (bills[1] * cr) : 0;
- const billPrice = (raw, catalogPrice) => cr > 0 ? ceilBaht(raw) : catalogPrice;
+ // ส่วนลดต่องวดปัดเป็นบาทแบบครึ่งขึ้น (19.8→20 · 17.85→18 · 119.8→120)
+ // งวด 1 เก็บเต็ม แล้วนำส่วนลดงวด 1 ที่ปัดแล้วไปลดทั้งก้อนที่งวด 2
+ // รวมส่วนลด = ผลรวมส่วนลดที่ปัดแล้วทุกงวด (WD516 7Y 20% = 9,180 · MS4295 15% = 1,080)
+ const roundDisc = (price) => {
+ const n = Number(price) * cr;
+ if (!Number.isFinite(n) || n <= 0) return 0;
+ const satang = Math.round(n * 100);
+ return Math.floor((satang + 50) / 100);
+ };
+ const bill1Combo = (months > 1 && cr > 0) ? roundDisc(bills[1]) : 0;
  for (let k = 1; k <= months; k++) {
- let raw;
- if (k === 1) raw = bills[k]; // บิลแรกเก็บเต็ม
- else if (k === 2) raw = bills[k] - bills[k] * cr - bill1Combo; // งวด 2 รับ combo บิลแรกทั้งก้อน
- else raw = bills[k] - bills[k] * cr; // งวด 3+ หัก combo ปกติ
- out.push({ bill: k, base: bills[k], price: billPrice(raw, bills[k]) });
+ let price = bills[k];
+ if (cr > 0 && k > 1) {
+ price = bills[k] - roundDisc(bills[k]) - (k === 2 ? bill1Combo : 0);
+ if (price < 0) price = 0;
+ }
+ out.push({ bill: k, base: bills[k], price });
  }
  }
  return { advance: adv, bills: out, comboRate: cr };
@@ -4120,6 +4140,19 @@ function lgCalculator() {
  },
  grandTotalSaving() {
  return Math.round((this.grandTotalNoCombo() - this.grandTotal()) * 100) / 100;
+ },
+ itemComboSaving(item) {
+ if (!item || item.outright || !(this.comboRateFor(item) > 0)) return 0;
+ const save = this.itemComboSchedule(item).bills.reduce((s, b) => s + ((Number(b.base) || 0) - (Number(b.price) || 0)), 0);
+ return Math.round(save * 100) / 100;
+ },
+ comboSavingRows() {
+ return this.quoteGroupedItems().map(g => ({
+ label: this.productTypeLabel(g.item) || g.item.category || g.item.code,
+ code: g.item.code,
+ qty: g.qty,
+ saving: Math.round(this.itemComboSaving(g.item) * g.qty * 100) / 100,
+ })).filter(r => r.saving > 0);
  },
  totalSaving() {
  const promoSaving = this.cart.reduce((s, it) => s + it.totalSaving, 0);
@@ -4716,7 +4749,10 @@ function lgCalculator() {
         txt += '<div style="margin-top:5px;font-size:0.85em">จ่ายรายเดือน <strong>฿' + this.netMonthly().toLocaleString() + '</strong>/เดือน ตลอดสัญญา</div>';
       }
       if (hasCombo) {
-        txt += '<div style="margin-top:3px;font-size:0.82em;color:#7c3aed">ส่วนลด ' + this.quoteComboDiscountText() + ' — ประหยัด ฿' + this.comboDiscount().toLocaleString() + '/เดือน</div>';
+        txt += '<div style="margin-top:3px;font-size:0.82em;color:#7c3aed">ส่วนลด ' + this.quoteComboDiscountText() + ' ทั้งสัญญา — ฿' + this.grandTotalSaving().toLocaleString() + '</div>';
+        this.comboSavingRows().forEach(row => {
+          txt += '<div style="font-size:0.78em;color:#6b7280">· ' + row.label + (row.qty > 1 ? (' ×' + row.qty) : '') + ' ฿' + row.saving.toLocaleString() + '</div>';
+        });
       }
       txt += '<div style="margin-top:3px;font-size:0.78em;color:#9ca3af">' + this.customerPromoRuleText() + '</div>';
       txt += '</div>';
@@ -4795,7 +4831,10 @@ function lgCalculator() {
       txt += '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:11px 14px;margin-top:4px">';
       if (hasCombo) {
         txt += '<div style="font-size:0.85em;color:#374151">ยอดรวมก่อนส่วนลด: ฿' + this.totalMonthly().toLocaleString() + '/เดือน</div>';
-        txt += '<div style="font-size:0.85em;color:#7c3aed">ส่วนลด ' + this.quoteComboDiscountText() + ': −฿' + this.comboDiscount().toLocaleString() + '/เดือน</div>';
+        txt += '<div style="font-size:0.85em;color:#7c3aed">ส่วนลด ' + this.quoteComboDiscountText() + ' ทั้งสัญญา: −฿' + this.grandTotalSaving().toLocaleString() + '</div>';
+        this.comboSavingRows().forEach(row => {
+          txt += '<div style="font-size:0.78em;color:#6b7280">· ' + row.label + (row.qty > 1 ? (' ×' + row.qty) : '') + ' −฿' + row.saving.toLocaleString() + '</div>';
+        });
         txt += '<div style="font-weight:600;margin-top:2px">ค่าเช่าสุทธิ/เดือน: ฿' + this.netMonthly().toLocaleString() + '</div>';
       } else {
         txt += '<div style="font-weight:600">ค่าเช่ารายเดือน: ฿' + this.netMonthly().toLocaleString() + '</div>';
@@ -4954,7 +4993,11 @@ function lgCalculator() {
         lines.push('');
         lines.push('สรุปรวม ' + this.cart.length + ' รายการ');
         if (hasCombo) {
-          lines.push('ส่วนลด ' + this.quoteComboDiscountText() + ' · ค่าเช่าสุทธิ ' + this.netMonthly().toLocaleString() + ' บาท/เดือน');
+          lines.push('ส่วนลด ' + this.quoteComboDiscountText() + ' ทั้งสัญญา ' + this.grandTotalSaving().toLocaleString() + ' บาท');
+          this.comboSavingRows().forEach(row => {
+            lines.push('  ' + row.label + (row.qty > 1 ? (' ×' + row.qty) : '') + ' ' + row.saving.toLocaleString() + ' บาท');
+          });
+          lines.push('ค่าเช่าสุทธิหลังหมดโปร ' + this.netMonthly().toLocaleString() + ' บาท/เดือน');
         }
         // ยอดผ่อนรวมทุกชิ้นต่อช่วง
         const cartRanges = this.cartBillRangeTotals();
@@ -5706,7 +5749,8 @@ ${'</'+'style>'}
         ${!payOnce && this.hasOutright() ? '<div class="row"><span>ซื้อขาดรวม</span><span>฿' + this.fmtMoney(this.totalOutright()) + '</span></div>' : ''}
         ${payPeriodRows}
         ${(showGrand || payOnce) ? (
-          (showGrand && hasCombo ? '<div class="row"><span>ส่วนลด ' + esc(this.quoteComboDiscountText()) + '</span><span>−฿' + this.fmtMoney(this.grandTotalSaving()) + '</span></div>' : '')
+          (showGrand && hasCombo ? '<div class="row"><span>ส่วนลด ' + esc(this.quoteComboDiscountText()) + ' ทั้งสัญญา</span><span>−฿' + this.fmtMoney(this.grandTotalSaving()) + '</span></div>'
+            + this.comboSavingRows().map(r => '<div class="row"><span>' + esc(r.label) + (r.qty > 1 ? (' ×' + r.qty) : '') + '<span class="en">' + esc(r.code) + '</span></span><span>−฿' + this.fmtMoney(r.saving) + '</span></div>').join('') : '')
           + (showGrand ? '<div class="row"><span>ส่วนลดทั้งหมด</span><span>฿' + this.fmtMoney(totalDiscountAll) + '</span></div>' : '')
           + (showGrand ? '<div class="row grand"><span>ยอดรวมทั้งสิ้น</span><span>฿' + this.fmtMoney(grand) + '</span></div>' : '')
           + '<div class="baht">฿ BAHT : ' + esc(this.bahtText(grand)) + '</div>'
