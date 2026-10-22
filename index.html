@@ -3001,7 +3001,7 @@ function lgCalculator() {
  return [{ bill: 'ครั้งเดียว', regular: reg, promo: tot, total: tot }];
  },
  refreshCategoryList() {
- this.categoryList = Object.keys(this.catalog || {});
+ this.categoryList = Object.keys(this.catalog || {}).filter(k => ((this.catalog[k] || {}).models || []).length > 0);
  },
  refreshModelList() {
  const models = this.catalog[this.picker.category]?.models || [];
