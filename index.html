@@ -1544,7 +1544,7 @@
                 <button class="btn-primary" style="width:100%;background:var(--ink)" @click="printQuotation('proposal')">พิมพ์ใบเสนอราคา</button>
                 <button class="btn-ghost" style="width:100%" @click="exportQuotationImage('summary')">เซฟใบสรุปราคา (รูป)</button>
                 <button class="btn-ghost" style="width:100%" @click="exportQuotationImage('proposal')">เซฟใบเสนอราคา (รูป)</button>
-                <label class="text-xs font-semibold block mb-1">รูปแบบข้อความสำหรับลูกค้า<select aria-label="รูปแบบข้อความสำหรับลูกค้า" x-model="summaryAudience" style="margin-top:6px"><option value="general">1. แบบทั่วไป</option><option value="credit">2. แบบบัตรเครดิต</option><option value="account">3. แบบหักบัญชีอัตโนมัติ</option></select></label><button class="btn-ghost" style="width:100%" @click="copySummary()">คัดลอกข้อความ</button>
+                <label class="text-xs font-semibold block mb-1">รูปแบบข้อความสำหรับลูกค้า<select aria-label="รูปแบบข้อความสำหรับลูกค้า" x-model="summaryAudience" style="margin-top:6px"><option value="general">1. แบบทั่วไป</option><option value="credit">2. แบบบัตรเครดิต</option><option value="account">3. แบบหักบัญชีอัตโนมัติ</option><option value="product">4. เฉพาะสินค้าและราคา</option></select></label><button class="btn-ghost" style="width:100%" @click="copySummary()">คัดลอกข้อความ</button>
               </div>
               <!-- ซ่อนเฉพาะช่องกรอกข้อมูลลูกค้า/ผู้เสนอราคา -->
               <button type="button" class="btn-compare-toggle" style="width:100%;margin-top:10px;margin-bottom:0"
@@ -1579,7 +1579,7 @@
               </div>
             </div>
             <div class="mt-4" x-show="cart.length === 0">
-              <label class="text-xs font-semibold block mb-1">รูปแบบข้อความสำหรับลูกค้า<select aria-label="รูปแบบข้อความสำหรับลูกค้า" x-model="summaryAudience" style="margin-top:6px"><option value="general">1. แบบทั่วไป</option><option value="credit">2. แบบบัตรเครดิต</option><option value="account">3. แบบหักบัญชีอัตโนมัติ</option></select></label><button class="btn-primary" style="width:100%" @click="copySummary()">คัดลอกข้อความ</button>
+              <label class="text-xs font-semibold block mb-1">รูปแบบข้อความสำหรับลูกค้า<select aria-label="รูปแบบข้อความสำหรับลูกค้า" x-model="summaryAudience" style="margin-top:6px"><option value="general">1. แบบทั่วไป</option><option value="credit">2. แบบบัตรเครดิต</option><option value="account">3. แบบหักบัญชีอัตโนมัติ</option><option value="product">4. เฉพาะสินค้าและราคา</option></select></label><button class="btn-primary" style="width:100%" @click="copySummary()">คัดลอกข้อความ</button>
             </div>
  </div>
  </div>
@@ -1808,10 +1808,10 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.23-v1',
+ buildVersion: '2026.10.23-v2',
  summaryAudience: 'general',
  summaryAudienceLabel() {
- return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ'}[this.summaryAudience] || 'แบบทั่วไป';
+ return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
  },
  summaryApplicationText() {
  const mode = this.summaryAudience;
@@ -5140,7 +5140,7 @@ function lgCalculator() {
           }
         });
       }
-      lines.push('', '━━━━━━━━━━━━━━', this.summaryApplicationText());
+      if (this.summaryAudience !== 'product') lines.push('', '━━━━━━━━━━━━━━', this.summaryApplicationText());
       this.copyText(lines.join('\n'), 'คัดลอกข้อความ' + this.summaryAudienceLabel() + 'แล้ว');
     },
 
