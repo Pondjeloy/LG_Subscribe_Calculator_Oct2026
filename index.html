@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.28-v1 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
+<!-- LG Subscribe Calculator build 2026.10.28-v2 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -831,9 +831,36 @@
      <p x-text="'ประหยัดรวม: ' + tradeInMoney(tradeInQuote().saving) + ' บาท เทียบราคาปกติของทั้งสองเครื่อง 60 เดือน'"></p>
     </div>
     <p style="margin:16px 0">ทั้งสองเครื่องเป็นสัญญา 5 ปี (60 เดือน) คำว่า “ฟรี” หมายถึงมูลค่าส่วนลดรวมของสินค้า 2 เครื่อง โดยเครื่องกรองน้ำยังมีค่างวด 549 บาท/เดือน</p>
+<details style="margin:20px 0"><summary>ข้อมูลลูกค้า / ผู้เสนอราคา และรูปแบบใบพิมพ์</summary>
+<label style="display:block;margin:12px 0">ประเภทลูกค้า <select x-model="customerType"><option value="new">ลูกค้าใหม่</option><option value="exist">ลูกค้าเก่า</option></select></label>
+<label style="display:block;margin:12px 0"><input type="checkbox" x-model="quoteShowGrandTotal"> แสดงยอดสุทธิในใบสรุป / ใบเสนอราคา</label>
+              <div class="space-y-1.5 mb-2" style="font-size:11px">
+                <div class="text-xs font-semibold text-gray-600">ข้อมูลลูกค้า</div>
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="นามผู้รับ / บริษัท" x-model="quoteCustomer.name" />
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="ที่อยู่ บรรทัด 1" x-model="quoteCustomer.address" />
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="ที่อยู่ บรรทัด 2" x-model="quoteCustomer.address2" />
+                <div class="grid grid-cols-2 gap-1.5">
+                  <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="เลขผู้เสียภาษี" x-model="quoteCustomer.taxId" />
+                  <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="สาขา" x-model="quoteCustomer.branch" />
+                  <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="ผู้ติดต่อ" x-model="quoteCustomer.contact" />
+                  <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="เบอร์โทรลูกค้า" x-model="quoteCustomer.phone" />
+                </div>
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="E-Mail ลูกค้า" x-model="quoteCustomer.email" />
+                <div class="text-xs font-semibold text-gray-600" style="margin-top:6px">ข้อมูลผู้เสนอราคา</div>
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="ตำแหน่ง / ฝ่าย" x-model="quoteCustomer.sellerTitle" />
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="ชื่อผู้เสนอราคา" x-model="quoteCustomer.sellerName" />
+                <div class="grid grid-cols-2 gap-1.5">
+                  <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="โทรผู้เสนอราคา" x-model="quoteCustomer.sellerPhone" />
+                  <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="อีเมลผู้เสนอราคา" x-model="quoteCustomer.sellerEmail" />
+                </div>
+                <input class="w-full text-xs" style="border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px" placeholder="LINE ผู้เสนอราคา" x-model="quoteCustomer.sellerLine" />
+              </div></details>
     <div class="flex flex-wrap gap-3">
      <button class="btn-primary" @click="copyTradeIn()">คัดลอกสรุปให้ลูกค้า</button>
-     <button class="btn-ghost" @click="printTradeIn()">พิมพ์ / บันทึก PDF</button>
+     <button class="btn-ghost" @click="printTradeIn('summary')">พิมพ์ใบสรุปราคา</button>
+     <button class="btn-ghost" @click="printTradeIn('proposal')">พิมพ์ใบเสนอราคา</button>
+     <button class="btn-ghost" @click="exportTradeIn('summary')">เซฟใบสรุปราคา (รูป)</button>
+     <button class="btn-ghost" @click="exportTradeIn('proposal')">เซฟใบเสนอราคา (รูป)</button>
     </div>
     <p role="status" style="margin-top:12px" x-text="tradeInMessage"></p>
    </div>
@@ -1868,7 +1895,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.28-v1',
+ buildVersion: '2026.10.28-v2',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -5583,7 +5610,7 @@ function lgCalculator() {
           itemsHtml += '</tr>';
         }
       });
-      totalDiscountAll = Math.round(totalDiscountAll * 100) / 100;
+      totalDiscountAll = Number.isFinite(opts.verifiedDiscountTotal) ? opts.verifiedDiscountTotal : Math.round(totalDiscountAll * 100) / 100;
 
       const hasVal = (v) => v != null && String(v).trim() !== '';
       const sellerName = hasVal(q.sellerName) ? esc(String(q.sellerName).trim()) : '';
@@ -6449,6 +6476,7 @@ ${'</'+'html>'}`;
  }
 }
 // Embedded in the standalone source by update_trade_in.py; independent of normal combo rates.
+// Authoring template embedded in lg_subscribe_calculator_.html; independent of normal combo rates.
 function lgTradeInCalculator() {
  return {
   calculatorMode: 'normal', tradeInMain: '', tradeInWater: '', tradeInMessage: '',
@@ -6482,7 +6510,7 @@ function lgTradeInCalculator() {
   },
   tradeInBenefit() {
    const q=this.tradeInQuote(); if (!q) return '';
-   return q.model.group === 5 ? 'ส่วนลดรวม 47,940 บาท เทียบเท่าค่าเครื่องกรองน้ำราคาปกติ 799 บาท × 60 เดือน' : 'ส่วนลดรวม 28,740 บาท ตามแคมเปญ “ฟรีเครื่องกรองน้ำ สัญญา 3 ปี” โดยสัญญาที่สมัครจริงของทั้งสองเครื่องคือ 5 ปี';
+   return q.model.group === 5 ? 'Premium 5: สินค้าหลักลด 549 + เครื่องกรองน้ำลด 250 = 799 บาท/เดือน × 60 เดือน รวมส่วนลด 47,940 บาท เทียบเท่าค่าเครื่องกรองน้ำราคาปกติ 60 เดือน' : 'Premium 10: สินค้าหลักลด 229 + เครื่องกรองน้ำลด 250 = 479 บาท/เดือน × 60 เดือน รวมส่วนลด 28,740 บาท ตามแคมเปญ “ฟรีเครื่องกรองน้ำ สัญญา 3 ปี” (ตารางบริษัทระบุเทียบ 36 เดือน) โดยสัญญาที่สมัครจริงของทั้งสองเครื่องคือ 5 ปี';
   },
   tradeInInitialNote() {
    const q=this.tradeInQuote(); if (!q) return '';
@@ -6525,13 +6553,35 @@ function lgTradeInCalculator() {
     const ok=document.execCommand('copy');el.remove();this.tradeInMessage=ok?'คัดลอกสรุปราคาแล้ว':'คัดลอกไม่สำเร็จ กรุณาใช้ปุ่มพิมพ์ / บันทึก PDF';
    }
   },
-  printTradeIn() {
-   const text=this.tradeInSummary();if (!text) return;
-   const w=window.open('','_blank');if(!w){this.tradeInMessage='กรุณาอนุญาตหน้าต่างใหม่เพื่อพิมพ์ใบสรุปราคา';return;}
-   const safe=text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-   w.document.write('<!DOCTYPE html><html lang="th"><meta charset="utf-8"><title>LG PuriCare — ใบสรุปราคา</title><style>@page{size:A4;margin:16mm}body{font-family:Tahoma,sans-serif;color:#222;font-size:12px;line-height:1.65}h1{color:#a50034;font-size:22px;border-bottom:2px solid #a50034;padding-bottom:10px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}@media print{button{display:none}}</style><h1>LG Subscribe · ใบสรุปราคา</h1><pre>'+safe+'</pre><button onclick="window.print()">พิมพ์ / บันทึก PDF</button></html>');
-   w.document.close();w.focus();
-  }
+  tradeInDocumentContext() {
+   const q=this.tradeInQuote();if(!q)return null;
+   const find=(code)=>{for(const [category,g] of Object.entries(this.catalog)){const model=g.models.find(m=>m.code===code);if(model)return {category,model};}return null;};
+   const make=(code,name,regular,price,cycle,tv,advance)=>{
+    const found=find(code);
+    return {code,name:found?found.model.name:name,category:found?found.category:(tv?'โทรทัศน์ / TV':'เครื่องกรองน้ำ'),term:'5Y',serviceType:tv?'No Service':'Visit',serviceCycle:tv?'No Service':'ทุก '+cycle+' เดือน',regular,effectiveMonthly:tv?price/2:price,promoMonths:tv?12:60,postPromoPrice:price,promo:'LG PuriCare Trade-in Promotion',advancePayment:advance,outright:false,totalContractMonths:60,totalSaving:(regular-price)*60,billSchedule:tv?[{range:'1-12',price:price/2},{range:'13-60',price}]:[{range:'1-60',price}]};
+   };
+   const cart=[make(q.model.code,q.model.name,q.model.regular,q.model.price,q.model.cycle,q.model.tv,q.advance),make(q.water.code,'เครื่องกรองน้ำ '+q.water.color,799,549,6,false,0)];
+   const render=this.quotationHtml;
+   // A separate context reuses the existing document renderer without changing the normal cart.
+   return {...this,cart,quoteCustomer:{...this.quoteCustomer},specialCombo:false,quotePayOnce:false,
+    comboRate:()=>0,comboRateFor:()=>0,isSpecialComboEffective:()=>false,isEventPromoActive:()=>false,
+    promoDateText:()=> 'LG PuriCare Trade-in · 28 ต.ค.–30 พ.ย. 2569',
+    quoteValidPromoEnd:()=> '2569-11-30',
+    advanceKindParen:(it,start,end)=>it.advancePayment>0&&end<=12?'หลังหักเงินล่วงหน้า':'',
+    quoteRemarkItems:()=>[
+     {type:'text',text:'LG PuriCare Trade-in Promotion · 28 ต.ค.–30 พ.ย. 2569'},
+     {type:'text',text:this.tradeInInitialNote()},
+     {type:'text',text:this.tradeInBenefit()},
+     {type:'text',text:'ทั้งสองเครื่องเป็นสัญญา 5 ปี คำว่า “ฟรี” หมายถึงมูลค่าส่วนลดรวม เครื่องกรองน้ำยังมีค่างวด 549 บาท/เดือน'},
+     {type:'text',text:'ไม่ร่วมโปรโมชั่น Combo New+New และ Exist+New ราคานี้ไม่มีการหักคอมโบซ้ำ'},
+     {type:'text',text:'เงื่อนไขเป็นไปตามที่บริษัทกำหนด ราคาและระยะเวลาอาจเปลี่ยนแปลงตามประกาศบริษัท'}
+    ],
+    cartBillRangeTotals:()=>({segments:q.payments.map((p,i)=>({start:q.model.tv?[1,2,13][i]:2,end:q.model.tv?[1,12,60][i]:60,months:p.count,pricePerMonth:p.amount,total:p.amount*p.count}))}),
+    quotationHtml(mode,opts={}){return render.call(this,mode,{...opts,verifiedDiscountTotal:q.saving});}
+   };
+  },
+  printTradeIn(mode='summary') { const context=this.tradeInDocumentContext();if(context)context.openQuotationOverlay(context.quotationHtml(mode,{autoPrint:false}),mode==='proposal'?'ใบเสนอราคา':'ใบสรุปราคา'); },
+  async exportTradeIn(mode='summary') { const context=this.tradeInDocumentContext();if(context)await context.exportQuotationImage(mode); }
  };
 }
 
