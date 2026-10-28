@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.20-v1 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
+<!-- LG Subscribe Calculator build 2026.10.28-v1 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -781,7 +781,66 @@
  </div>
  </header>
 
- <div class="max-w-7xl px-6 py-8 grid grid-cols-1 lg-grid-main gap-8">
+ <div class="max-w-7xl px-6" style="padding-top:24px">
+  <div class="flex gap-3 flex-wrap" aria-label="เลือกโปรโมชั่น">
+   <button class="btn-ghost" :aria-pressed="calculatorMode === 'normal'" @click="calculatorMode='normal'">โปรโมชั่นปกติ</button>
+   <button class="btn-primary" :aria-pressed="calculatorMode === 'tradeIn'" @click="calculatorMode='tradeIn'">LG PuriCare Trade-in · ใหม่</button>
+  </div>
+ </div>
+ <section x-show="calculatorMode === 'tradeIn'" x-cloak class="max-w-7xl px-6 py-8" aria-label="LG PuriCare Trade-in Promotion">
+  <div class="card" style="padding:24px">
+   <h2 class="font-display font-bold text-2xl">LG PuriCare Trade-in Promotion</h2>
+   <p style="margin:8px 0 20px">Buy 1, Get 1 FREE! · 28 ต.ค.–30 พ.ย. 2569 · สินค้าหลัก 1 เครื่อง + เครื่องกรองน้ำ 1 เครื่อง</p>
+   <p x-show="!tradeInActive()" style="color:#b45309;margin-bottom:16px">อยู่นอกช่วงโปรโมชั่น — แสดงราคาเพื่ออ้างอิงเท่านั้น</p>
+   <div class="grid grid-cols-1 gap-4" style="max-width:900px">
+    <label>สินค้าหลัก (สัญญา 5 ปี)
+     <select x-model="tradeInMain" aria-label="สินค้าหลัก Trade-in">
+      <option value="">เลือกรุ่นสินค้าหลัก</option>
+      <template x-for="m in tradeInConfig.models" :key="m.code"><option :value="m.code" x-text="m.name + ' · ' + m.code + ' · ' + tradeInMoney(m.price) + ' บาท/เดือน'"></option></template>
+     </select>
+    </label>
+    <label>เครื่องกรองน้ำ (สัญญา 5 ปี · Visit ทุก 6 เดือน)
+     <select x-model="tradeInWater" aria-label="เครื่องกรองน้ำ Trade-in">
+      <option value="">เลือกเครื่องกรองน้ำและสี</option>
+      <template x-for="w in tradeInConfig.waterModels" :key="w.code"><option :value="w.code" x-text="w.code + ' · ' + w.color"></option></template>
+     </select>
+    </label>
+   </div>
+   <p style="margin-top:16px;color:var(--muted)">โปรนี้ไม่ร่วม Combo New+New และ Exist+New · คำนวณเฉพาะคู่ที่เลือกในหน้านี้</p>
+  </div>
+  <template x-if="tradeInQuote()">
+   <div class="card" style="padding:24px;margin-top:20px" x-data="{}">
+    <h3 class="font-bold text-lg" x-text="tradeInQuote().model.group === 5 ? 'Premium 5-Product Combo' : 'Premium 10-Product Combo'"></h3>
+    <p style="margin:8px 0 16px" x-text="tradeInBenefit()"></p>
+    <div style="overflow-x:auto">
+     <table style="width:100%;border-collapse:collapse;min-width:560px">
+      <thead><tr><th style="text-align:left;padding:12px">สินค้า / บริการ</th><th>ราคาปกติ/เดือน</th><th>ราคาโปร/เดือน</th></tr></thead>
+      <tbody>
+       <tr><td style="padding:12px;border-top:1px solid var(--line)"><b x-text="tradeInQuote().model.code"></b><div x-text="tradeInService()"></div></td><td style="text-align:center" x-text="tradeInMoney(tradeInQuote().model.regular)"></td><td style="text-align:center" x-text="tradeInMoney(tradeInQuote().model.price)"></td></tr>
+       <tr><td style="padding:12px;border-top:1px solid var(--line)"><b x-text="tradeInWater"></b><div>Visit ทุก 6 เดือน · สัญญา 5 ปี</div></td><td style="text-align:center">799</td><td style="text-align:center">549</td></tr>
+      </tbody>
+     </table>
+    </div>
+    <p style="margin-top:16px" x-text="tradeInQuote().model.tv ? 'ราคาโปรทีวีในตารางเป็นฐานรายเดือน ก่อนหักเงินล่วงหน้าในงวด 1–12' : 'ราคาโปรคงที่ตลอดสัญญา 60 งวด'"></p>
+    <h3 class="font-bold text-lg" style="margin-top:24px">ข้อมูลการชำระเงิน</h3>
+    <p style="margin:10px 0" x-text="'ชำระครั้งแรก ' + tradeInMoney(tradeInQuote().initial) + ' บาท'"></p>
+    <p x-text="tradeInInitialNote()"></p>
+    <template x-for="row in tradeInQuote().payments" :key="row.label"><p style="margin-top:8px" x-text="row.label + ': ' + tradeInMoney(row.amount) + ' บาท' + (row.count > 1 ? '/เดือน × ' + row.count + ' งวด' : '')"></p></template>
+    <div style="margin-top:20px;padding:16px;background:var(--bg-soft);border-radius:12px">
+     <p class="font-bold" x-text="'รวมตลอดสัญญา 2 เครื่อง: ' + tradeInMoney(tradeInQuote().total) + ' บาท'"></p>
+     <p x-text="'ประหยัดรวม: ' + tradeInMoney(tradeInQuote().saving) + ' บาท เทียบราคาปกติของทั้งสองเครื่อง 60 เดือน'"></p>
+    </div>
+    <p style="margin:16px 0">ทั้งสองเครื่องเป็นสัญญา 5 ปี (60 เดือน) คำว่า “ฟรี” หมายถึงมูลค่าส่วนลดรวมของสินค้า 2 เครื่อง โดยเครื่องกรองน้ำยังมีค่างวด 549 บาท/เดือน</p>
+    <div class="flex flex-wrap gap-3">
+     <button class="btn-primary" @click="copyTradeIn()">คัดลอกสรุปให้ลูกค้า</button>
+     <button class="btn-ghost" @click="printTradeIn()">พิมพ์ / บันทึก PDF</button>
+    </div>
+    <p role="status" style="margin-top:12px" x-text="tradeInMessage"></p>
+   </div>
+  </template>
+ </section>
+
+ <div x-show="calculatorMode === 'normal'" class="max-w-7xl px-6 py-8 grid grid-cols-1 lg-grid-main gap-8">
 
  <!-- LEFT -->
  <div class="space-y-6">
@@ -1628,6 +1687,7 @@
 <script>
 function lgCalculator() {
  return {
+ ...lgTradeInCalculator(),
  customerType: 'new',
  specialCombo: false,
  showComboSettings: false,
@@ -1808,7 +1868,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.23-v4',
+ buildVersion: '2026.10.28-v1',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -6388,6 +6448,93 @@ ${'</'+'html>'}`;
     }
  }
 }
+// Embedded in the standalone source by update_trade_in.py; independent of normal combo rates.
+function lgTradeInCalculator() {
+ return {
+  calculatorMode: 'normal', tradeInMain: '', tradeInWater: '', tradeInMessage: '',
+  tradeInConfig: {"start": "2026-10-28", "end": "2026-11-30", "months": 60, "waterPrice": 549, "waterRegular": 799, "waterModels": [{"code": "WD516AN.ACNPLMT", "color": "น้ำเงิน"}, {"code": "WD516AN.AEWPLMT", "color": "ขาว"}, {"code": "WD516AN.ASLPLMT", "color": "เงิน"}, {"code": "WD518AN.ABGPLMT", "color": "เบจ"}, {"code": "WD518AN.AWHPLMT", "color": "ขาว"}, {"code": "WD518AN.ACGPLMT", "color": "เทา"}], "models": [{"code": "100MRGB96BS.ATM", "name": "โทรทัศน์ Micro RGB 100 นิ้ว", "group": 5, "regular": 4499, "price": 3950, "cycle": 0, "tv": true, "page": 4, "advance": 23700}, {"code": "OLED77C6PSA.ATM", "name": "โทรทัศน์ OLED 77 นิ้ว", "group": 5, "regular": 1999, "price": 1450, "cycle": 0, "tv": true, "page": 6, "advance": 8700}, {"code": "OLED83C6PSA.ATM", "name": "โทรทัศน์ OLED 83 นิ้ว", "group": 5, "regular": 2699, "price": 2150, "cycle": 0, "tv": true, "page": 5, "advance": 12900}, {"code": "WT2520NHEG.ABGPETH", "name": "Wash Tower ซัก 25 / อบ 20 กก.", "group": 5, "regular": 2399, "price": 1850, "cycle": 12, "tv": false, "page": 7, "advance": 0}, {"code": "WT2116SHEG.ABGPETH", "name": "Wash Tower ซัก 21 / อบ 16 กก.", "group": 5, "regular": 1999, "price": 1450, "cycle": 12, "tv": false, "page": 8, "advance": 0}, {"code": "GC-G24FFQKB.AEEPLM1", "name": "ตู้เย็น Multi Door 22.5 คิว", "group": 10, "regular": 1349, "price": 1120, "cycle": 24, "tv": false, "page": 9, "advance": 0}, {"code": "GC-X257CMEW.ATEPLMT", "name": "ตู้เย็น Side by Side 22.4 คิว", "group": 10, "regular": 1249, "price": 1020, "cycle": 24, "tv": false, "page": 10, "advance": 0}, {"code": "WT1410NHEG.ABGPQTH", "name": "Wash Tower ซัก 14 / อบ 10 กก.", "group": 10, "regular": 1599, "price": 1370, "cycle": 12, "tv": false, "page": 11, "advance": 0}, {"code": "AS10GDBY0.ABAE", "name": "เครื่องฟอกอากาศ Alpha Pet", "group": 10, "regular": 1199, "price": 970, "cycle": 6, "tv": false, "page": 12, "advance": 0}, {"code": "SAQ18B.S21", "name": "เครื่องปรับอากาศ DUALCOOL AI 18,000 BTU", "group": 10, "regular": 1149, "price": 920, "cycle": 6, "tv": false, "page": 13, "advance": 0}, {"code": "SAQ24B.S21", "name": "เครื่องปรับอากาศ DUALCOOL AI 24,000 BTU", "group": 10, "regular": 1299, "price": 1070, "cycle": 6, "tv": false, "page": 14, "advance": 0}, {"code": "ART13A.SR1", "name": "เครื่องปรับอากาศ ARTCOOL AI 11,942 BTU", "group": 10, "regular": 1049, "price": 820, "cycle": 6, "tv": false, "page": 15, "advance": 0}, {"code": "ART18A.SR1", "name": "เครื่องปรับอากาศ ARTCOOL AI 18,084 BTU", "group": 10, "regular": 1249, "price": 1020, "cycle": 6, "tv": false, "page": 16, "advance": 0}, {"code": "OLED65C6PSA.ATM", "name": "โทรทัศน์ OLED 65 นิ้ว", "group": 10, "regular": 1299, "price": 1070, "cycle": 0, "tv": true, "page": 17, "advance": 6420}, {"code": "OLED55C6PSA.ATM", "name": "โทรทัศน์ OLED 55 นิ้ว", "group": 10, "regular": 1099, "price": 870, "cycle": 0, "tv": true, "page": 18, "advance": 5220}]},
+  tradeInActive(now = new Date()) {
+   const day = new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+   return day >= this.tradeInConfig.start && day <= this.tradeInConfig.end;
+  },
+  tradeInMoney(n) { return Number(n).toLocaleString('th-TH', {maximumFractionDigits:2}); },
+  tradeInQuote() {
+   const model = this.tradeInConfig.models.find(m => m.code === this.tradeInMain);
+   const water = this.tradeInConfig.waterModels.find(w => w.code === this.tradeInWater);
+   if (!model || !water) return null;
+   const wp = this.tradeInConfig.waterPrice;
+   // A non-TV's first payment and WP first payment are bill 1 (user confirmed 28 Oct).
+   // TV advance is 6 promotional months, credited evenly against bills 1–12.
+   const advance = model.tv ? model.advance : 0;
+   const initial = (model.tv ? advance : model.price) + wp;
+   const payments = model.tv ? [
+    {label:'งวดที่ 1: ทีวี (เครื่องกรองน้ำงวดที่ 1 ชำระแล้ว)',amount:model.price - advance/12,count:1},
+    {label:'งวดที่ 2–12: รวมสองเครื่อง',amount:model.price - advance/12 + wp,count:11},
+    {label:'งวดที่ 13–60: รวมสองเครื่อง',amount:model.price + wp,count:48}
+   ] : [{label:'งวดที่ 2–60: รวมสองเครื่อง',amount:model.price+wp,count:59}];
+   const total = initial + payments.reduce((sum,p) => sum+p.amount*p.count,0);
+   const saving = (model.regular + this.tradeInConfig.waterRegular)*60-total;
+   return {model,water,advance,initial,payments,total,saving};
+  },
+  tradeInService() {
+   const q=this.tradeInQuote(); if (!q) return '';
+   return q.model.tv ? 'รับประกันตลอดสัญญา 5 ปี (Warranty Only)' : 'Visit ทุก '+q.model.cycle+' เดือน · สัญญา 5 ปี';
+  },
+  tradeInBenefit() {
+   const q=this.tradeInQuote(); if (!q) return '';
+   return q.model.group === 5 ? 'ส่วนลดรวม 47,940 บาท เทียบเท่าค่าเครื่องกรองน้ำราคาปกติ 799 บาท × 60 เดือน' : 'ส่วนลดรวม 28,740 บาท ตามแคมเปญ “ฟรีเครื่องกรองน้ำ สัญญา 3 ปี” โดยสัญญาที่สมัครจริงของทั้งสองเครื่องคือ 5 ปี';
+  },
+  tradeInInitialNote() {
+   const q=this.tradeInQuote(); if (!q) return '';
+   return q.model.tv ? 'เงินล่วงหน้าทีวี '+this.tradeInMoney(q.advance)+' บาท + เครื่องกรองน้ำงวดที่ 1 จำนวน 549 บาท (ยังไม่รวมค่างวดที่ 1 ของทีวี) เงินล่วงหน้าทีวีทยอยหักเท่ากันในงวด 1–12' : 'รวมค่างวดที่ 1 ของทั้งสองเครื่องแล้ว จึงเริ่มชำระรายเดือนครั้งถัดไปที่งวด 2';
+  },
+  tradeInSummary() {
+   const q=this.tradeInQuote(); if (!q) return '';
+   const money=n=>this.tradeInMoney(n);
+   return [
+    'LG SUBSCRIBE — ใบสรุปราคา 2 รายการ',
+    'LG PuriCare Trade-in Promotion · Buy 1, Get 1 FREE!',
+    'โปรโมชั่น 28 ต.ค.–30 พ.ย. 2569',
+    ...(this.tradeInActive()?[]:['อยู่นอกช่วงโปรโมชั่น — ราคาเพื่ออ้างอิงเท่านั้น']),
+    q.model.group === 5 ? 'Premium 5-Product Combo' : 'Premium 10-Product Combo',
+    '', '1. '+q.model.name+' · '+q.model.code,
+    this.tradeInService(),
+    'ราคาปกติ '+money(q.model.regular)+' บาท/เดือน → ราคาโปร '+money(q.model.price)+' บาท/เดือน',
+    ...(q.model.tv ? ['ทีวี: งวด 1–12 จ่าย '+money(q.model.price-q.advance/12)+' บาท/เดือน หลังหักเงินล่วงหน้า; งวด 13–60 จ่าย '+money(q.model.price)+' บาท/เดือน'] : []),
+    '', '2. เครื่องกรองน้ำ '+q.water.code+' · '+q.water.color,
+    'สัญญา 5 ปี (60 เดือน) · Visit ทุก 6 เดือน',
+    'ราคาปกติ 799 บาท/เดือน → ราคาโปร 549 บาท/เดือน',
+    '', 'ข้อมูลการชำระเงิน',
+    'ชำระครั้งแรก: '+money(q.initial)+' บาท',this.tradeInInitialNote(),
+    ...q.payments.map(p=>p.label+': '+money(p.amount)+' บาท'+(p.count>1?'/เดือน × '+p.count+' งวด':'')),
+    '', 'รวมตลอดสัญญา 2 เครื่อง: '+money(q.total)+' บาท (รวมเงินที่ชำระครั้งแรกแล้ว)',
+    'ประหยัดรวม '+money(q.saving)+' บาท เทียบราคาปกติของทั้งสองเครื่องตลอด 60 เดือน',
+    this.tradeInBenefit(),
+    '', 'เงื่อนไขโปรโมชั่น',
+    '• ต้องสมัครสินค้าหลักคู่กับเครื่องกรองน้ำรุ่นที่ร่วมรายการ',
+    '• ทั้งสองเครื่องเป็นสัญญา 5 ปี คำว่า “ฟรี” เป็นมูลค่าส่วนลดรวมของสินค้า 2 เครื่อง เครื่องกรองน้ำยังมีค่างวด 549 บาท/เดือน',
+    '• ไม่ร่วมโปรโมชั่น Combo New+New และ Exist+New และไม่มีการหักส่วนลดคอมโบซ้ำในราคานี้',
+    '• ราคาและระยะเวลาอาจเปลี่ยนแปลงตามประกาศบริษัท เงื่อนไขเป็นไปตามที่บริษัทกำหนด'
+   ].join('\n');
+  },
+  async copyTradeIn() {
+   const text=this.tradeInSummary(); if (!text) return;
+   try { await navigator.clipboard.writeText(text); this.tradeInMessage='คัดลอกสรุปราคาแล้ว'; }
+   catch (_) {
+    const el=document.createElement('textarea'); el.value=text; document.body.appendChild(el);el.select();
+    const ok=document.execCommand('copy');el.remove();this.tradeInMessage=ok?'คัดลอกสรุปราคาแล้ว':'คัดลอกไม่สำเร็จ กรุณาใช้ปุ่มพิมพ์ / บันทึก PDF';
+   }
+  },
+  printTradeIn() {
+   const text=this.tradeInSummary();if (!text) return;
+   const w=window.open('','_blank');if(!w){this.tradeInMessage='กรุณาอนุญาตหน้าต่างใหม่เพื่อพิมพ์ใบสรุปราคา';return;}
+   const safe=text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+   w.document.write('<!DOCTYPE html><html lang="th"><meta charset="utf-8"><title>LG PuriCare — ใบสรุปราคา</title><style>@page{size:A4;margin:16mm}body{font-family:Tahoma,sans-serif;color:#222;font-size:12px;line-height:1.65}h1{color:#a50034;font-size:22px;border-bottom:2px solid #a50034;padding-bottom:10px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}@media print{button{display:none}}</style><h1>LG Subscribe · ใบสรุปราคา</h1><pre>'+safe+'</pre><button onclick="window.print()">พิมพ์ / บันทึก PDF</button></html>');
+   w.document.close();w.focus();
+  }
+ };
+}
+
 </script>
 
 
