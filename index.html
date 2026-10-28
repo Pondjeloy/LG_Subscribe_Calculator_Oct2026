@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.28-v3 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
+<!-- LG Subscribe Calculator build 2026.10.28-v4 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -1727,16 +1727,15 @@ function lgCalculator() {
  existTiers: [ {min:1, rate:10} ],
  waterRate: 15
  },
- // Subscribe Day 2nd Anniversary — ไฟล์ 1042739 · 3–27 ต.ค. 2569
- // ใหม่ 2 เครื่อง 15% · เดิม 1 เครื่อง 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20%
+ // Subscribe Day (3–27 ต.ค. 2569) ถอดออกตาม user 28 ต.ค. — เหลือคอมโบเดือน 10% / เครื่องกรองน้ำ 15%
  special: {
- name: 'Subscribe Day',
- dateStart: '2569-10-03',
- dateEnd: '2569-10-27',
- note: '2nd Anniversary · ลูกค้าใหม่ 2 เครื่องขึ้นไป 15% · ลูกค้าเดิม 1 เครื่องขึ้นไป 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20%',
- newTiers: [ {min:2, rate:15} ],
- existTiers: [ {min:1, rate:15} ],
- waterRate: 20
+ name: '',
+ dateStart: '',
+ dateEnd: '',
+ note: '',
+ newTiers: [],
+ existTiers: [],
+ waterRate: 0
  },
  // 9.9 Surprise Deal — จบ 11 ก.ย. 2569 · catalog กลับบิลแรก 149 ตามโปรเดือน
  eventPromo: {
@@ -1895,7 +1894,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.28-v3',
+ buildVersion: '2026.10.28-v4',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -3191,13 +3190,13 @@ function lgCalculator() {
  waterRate: 15
  },
  special: {
- name: 'Subscribe Day',
- dateStart: '2569-10-03',
- dateEnd: '2569-10-27',
- note: '2nd Anniversary · ลูกค้าใหม่ 2 เครื่องขึ้นไป 15% · ลูกค้าเดิม 1 เครื่องขึ้นไป 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20%',
- newTiers: [ {min:2, rate:15} ],
- existTiers: [ {min:1, rate:15} ],
- waterRate: 20
+ name: '',
+ dateStart: '',
+ dateEnd: '',
+ note: '',
+ newTiers: [],
+ existTiers: [],
+ waterRate: 0
  },
  eventPromo: {
  name: '9.9 Surprise Deal',
