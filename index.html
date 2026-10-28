@@ -6563,7 +6563,8 @@ function lgTradeInCalculator() {
    const cart=[make(q.model.code,q.model.name,q.model.regular,q.model.price,q.model.cycle,q.model.tv,q.advance),make(q.water.code,'เครื่องกรองน้ำ '+q.water.color,799,549,6,false,0)];
    const render=this.quotationHtml;
    // A separate context reuses the existing document renderer without changing the normal cart.
-   return {...this,cart,quoteCustomer:{...this.quoteCustomer},specialCombo:false,quotePayOnce:false,
+   // Alpine's `this` is a proxy with no own keys, so spreading it copies nothing; inherit from it instead.
+   return Object.assign(Object.create(this),{cart,quoteCustomer:{...this.quoteCustomer},specialCombo:false,quotePayOnce:false,
     comboRate:()=>0,comboRateFor:()=>0,isSpecialComboEffective:()=>false,isEventPromoActive:()=>false,
     promoDateText:()=> 'LG PuriCare Trade-in · 28 ต.ค.–30 พ.ย. 2569',
     quoteValidPromoEnd:()=> '2569-11-30',
@@ -6578,7 +6579,7 @@ function lgTradeInCalculator() {
     ],
     cartBillRangeTotals:()=>({segments:q.payments.map((p,i)=>({start:q.model.tv?[1,2,13][i]:2,end:q.model.tv?[1,12,60][i]:60,months:p.count,pricePerMonth:p.amount,total:p.amount*p.count}))}),
     quotationHtml(mode,opts={}){return render.call(this,mode,{...opts,verifiedDiscountTotal:q.saving});}
-   };
+   });
   },
   printTradeIn(mode='summary') { const context=this.tradeInDocumentContext();if(context)context.openQuotationOverlay(context.quotationHtml(mode,{autoPrint:false}),mode==='proposal'?'ใบเสนอราคา':'ใบสรุปราคา'); },
   async exportTradeIn(mode='summary') { const context=this.tradeInDocumentContext();if(context)await context.exportQuotationImage(mode); }
