@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.28-v2 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
+<!-- LG Subscribe Calculator build 2026.10.28-v3 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -783,8 +783,8 @@
 
  <div class="max-w-7xl px-6" style="padding-top:24px">
   <div class="flex gap-3 flex-wrap" aria-label="เลือกโปรโมชั่น">
-   <button class="btn-ghost" :aria-pressed="calculatorMode === 'normal'" @click="calculatorMode='normal'">โปรโมชั่นปกติ</button>
-   <button class="btn-primary" :aria-pressed="calculatorMode === 'tradeIn'" @click="calculatorMode='tradeIn'">LG PuriCare Trade-in · ใหม่</button>
+   <button :class="calculatorMode === 'normal' ? 'btn-primary' : 'btn-ghost'" :aria-pressed="calculatorMode === 'normal'" @click="calculatorMode='normal'">โปรโมชั่นปกติ</button>
+   <button :class="calculatorMode === 'tradeIn' ? 'btn-primary' : 'btn-ghost'" :aria-pressed="calculatorMode === 'tradeIn'" @click="calculatorMode='tradeIn'">LG PuriCare Trade-in · ใหม่</button>
   </div>
  </div>
  <section x-show="calculatorMode === 'tradeIn'" x-cloak class="max-w-7xl px-6 py-8" aria-label="LG PuriCare Trade-in Promotion">
@@ -1895,7 +1895,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.28-v2',
+ buildVersion: '2026.10.28-v3',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
