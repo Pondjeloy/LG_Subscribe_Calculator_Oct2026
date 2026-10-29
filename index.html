@@ -214,11 +214,14 @@
   .qty-stepper button:hover:not(:disabled){background:rgba(0,0,0,.06)}
   .qty-stepper button:disabled{opacity:.3;cursor:not-allowed}
   .qty-stepper .qty-val{
-    min-width:40px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;
+    min-width:40px;width:56px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;
     font-size:15px;padding:0 4px;
+    border:none;background:transparent;color:inherit;font-family:inherit;outline:none;-moz-appearance:textfield;appearance:textfield;
   }
+  .qty-stepper .qty-val::-webkit-outer-spin-button,.qty-stepper .qty-val::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .qty-stepper .qty-val:focus{background:rgba(0,0,0,.05)}
   .qty-stepper.qty-sm button{width:30px;height:30px;font-size:16px}
-  .qty-stepper.qty-sm .qty-val{min-width:32px;font-size:13px}
+  .qty-stepper.qty-sm .qty-val{min-width:32px;width:44px;font-size:13px}
   .qty-add-row{
     display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;width:100%;
   }
@@ -1248,8 +1251,8 @@
  <span class="qty-label">จำนวน</span>
  <div class="qty-stepper">
  <button type="button" @click="picker.qty = clampQty((Number(picker.qty)||1) - 1)" :disabled="(Number(picker.qty)||1) <= 1" aria-label="ลดจำนวน">−</button>
- <span class="qty-val" x-text="Number(picker.qty)||1"></span>
- <button type="button" @click="picker.qty = clampQty((Number(picker.qty)||1) + 1)" :disabled="(Number(picker.qty)||1) >= 99" aria-label="เพิ่มจำนวน">+</button>
+ <input type="number" inputmode="numeric" min="1" max="9999" class="qty-val" :value="Number(picker.qty)||1" @change="picker.qty = clampQty($event.target.value); $event.target.value = picker.qty" @focus="$event.target.select()" aria-label="จำนวน" />
+ <button type="button" @click="picker.qty = clampQty((Number(picker.qty)||1) + 1)" :disabled="(Number(picker.qty)||1) >= 9999" aria-label="เพิ่มจำนวน">+</button>
  </div>
  </div>
  <button class="btn-primary" @click="addToCart()" :disabled="!hasModelSelected() || picker.plan === ''">
@@ -1296,8 +1299,8 @@
  <span class="text-xs text-gray-500">จำนวน</span>
  <div class="qty-stepper qty-sm">
  <button type="button" @click="setGroupQty(quoteGroupKey(g.item), g.qty - 1)" :disabled="g.qty <= 1" aria-label="ลดจำนวน">−</button>
- <span class="qty-val" x-text="g.qty"></span>
- <button type="button" @click="setGroupQty(quoteGroupKey(g.item), g.qty + 1)" :disabled="g.qty >= 99" aria-label="เพิ่มจำนวน">+</button>
+ <input type="number" inputmode="numeric" min="1" max="9999" class="qty-val" :value="g.qty" @change="setGroupQty(quoteGroupKey(g.item), Math.max(1, Number($event.target.value)||1)); $event.target.value = g.qty" @focus="$event.target.select()" aria-label="จำนวน" />
+ <button type="button" @click="setGroupQty(quoteGroupKey(g.item), g.qty + 1)" :disabled="g.qty >= 9999" aria-label="เพิ่มจำนวน">+</button>
  </div>
  </div>
  </div>
@@ -2459,6 +2462,12 @@ function lgCalculator() {
           { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:499, effectiveMonthly:149, promoMonths:1, postPromoPrice:499, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 249, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 499, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (249) จากนั้น 499/เดือน', totalContractMonths:84, totalSaving:1600 },
           { term:'7Y', serviceType:'Self', serviceCycle:'ทุก 12 เดือน', regular:449, effectiveMonthly:149, promoMonths:1, postPromoPrice:449, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 224, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 449, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (224) จากนั้น 449/เดือน', totalContractMonths:84, totalSaving:1425 }
         ]},
+ { code:'MD19GQGA1.ATH', name:'ระบบ 19-30 ลิตร/วัน', plans:[
+          { term:'5Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:549, effectiveMonthly:149, promoMonths:1, postPromoPrice:549, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 274, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 549, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (274) จากนั้น 549/เดือน', totalContractMonths:60, totalSaving:1775 },
+          { term:'5Y', serviceType:'Self', serviceCycle:'ทุก 12 เดือน', regular:499, effectiveMonthly:149, promoMonths:1, postPromoPrice:499, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 249, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-60', 'price': 499, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (249) จากนั้น 499/เดือน', totalContractMonths:60, totalSaving:1600 },
+          { term:'7Y', serviceType:'Visit', serviceCycle:'ทุก 12 เดือน', regular:449, effectiveMonthly:149, promoMonths:1, postPromoPrice:449, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 224, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 449, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (224) จากนั้น 449/เดือน', totalContractMonths:84, totalSaving:1425 },
+          { term:'7Y', serviceType:'Self', serviceCycle:'ทุก 12 เดือน', regular:399, effectiveMonthly:149, promoMonths:1, postPromoPrice:399, billSchedule:[{'range': 'บิล 1', 'price': 149, 'note': 'ราคาพิเศษ'}, {'range': 'บิล 2-6', 'price': 199, 'note': 'โปรลด 50%'}, {'range': 'บิล 7-84', 'price': 399, 'note': 'ราคาปกติ'}], promo:'บิลแรก 149 ต่อด้วยลด 50% 5 รอบบิล (199) จากนั้น 399/เดือน', totalContractMonths:84, totalSaving:1250 }
+        ]},
  ]},
  'เครื่องปรับอากาศ DUALCOOL AI': { models: [
  { code:'SAQ11A.S11', name:'DUALCOOL AI · 9,212 BTU · เบอร์ 5', plans:[
@@ -3453,12 +3462,12 @@ function lgCalculator() {
  clampQty(n) {
  const v = Math.floor(Number(n) || 1);
  if (v < 1) return 1;
- if (v > 99) return 99;
+ if (v > 9999) return 9999;
  return v;
  },
  // ตั้งจำนวนรุ่น+สัญญาเดียวกันในตะกร้า (0 = ลบทั้งกลุ่ม) — เก็บเป็น 1 แถวต่อชิ้นเพื่อให้ combo/ยอดถูก
  setGroupQty(groupKey, newQty) {
- const q = Math.max(0, Math.min(99, Math.floor(Number(newQty) || 0)));
+ const q = Math.max(0, Math.min(9999, Math.floor(Number(newQty) || 0)));
  const match = this.cart.find(it => this.quoteGroupKey(it) === groupKey);
  if (!match) return;
  const template = {
