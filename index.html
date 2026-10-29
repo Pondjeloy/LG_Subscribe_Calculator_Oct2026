@@ -890,28 +890,29 @@
  </section>
 
  <!-- Subscribe Day 3–27 ต.ค. 2569 · ใหม่ 2+ / เดิม 1+ 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20% -->
- <section class="special-combo-banner" x-show="hasSpecialComboConfigured()" :class="specialCombo ? 'active' : ''">
+ <section class="special-combo-banner" :class="(specialCombo && hasSpecialComboConfigured()) ? 'active' : ''">
  <div class="special-combo-glow"></div>
  <div style="position:relative;z-index:2">
  <div class="flex items-center justify-between flex-wrap gap-3 mb-2">
  <div class="flex items-center gap-2">
  
  <div>
- <div class="font-display font-bold text-lg" style="color:var(--ink)" x-text="promoConfig.special.name"></div>
- <div class="text-xs" style="color:var(--ink)" x-show="promoConfig.special.note" x-text="promoConfig.special.note"></div>
- <div class="text-xs" style="color:var(--muted)" x-show="promoConfig.special.dateStart && promoConfig.special.dateEnd" x-text="'เฉพาะ ' + fmtDate(promoConfig.special.dateStart) + ' – ' + fmtDate(promoConfig.special.dateEnd) + ' เท่านั้น'"></div>
+ <div class="font-display font-bold text-lg" style="color:var(--ink)" x-text="hasSpecialComboConfigured() ? promoConfig.special.name : (promoConfig.normal.name || 'คอมโบเดือนปกติ')"></div>
+ <div class="text-xs" style="color:var(--ink)" x-show="hasSpecialComboConfigured() && promoConfig.special.note" x-text="promoConfig.special.note"></div>
+ <div class="text-xs" style="color:var(--muted)" x-show="hasSpecialComboConfigured() && promoConfig.special.dateStart && promoConfig.special.dateEnd" x-text="'เฉพาะ ' + fmtDate(promoConfig.special.dateStart) + ' – ' + fmtDate(promoConfig.special.dateEnd) + ' เท่านั้น'"></div>
+ <div class="text-xs" style="color:var(--muted)" x-show="!hasSpecialComboConfigured()" x-text="fmtDate(promoConfig.normal.dateStart) + ' – ' + fmtDate(promoConfig.normal.dateEnd) + ' · โปรคอมโบเดือนปกติ'"></div>
  </div>
  </div>
  <div class="flex items-center gap-3">
  <button class="special-settings-btn" @click="showComboSettings = !showComboSettings">ตั้งค่า</button>
- <label class="special-toggle">
+ <label class="special-toggle" x-show="hasSpecialComboConfigured()">
  <input type="checkbox" x-model="specialCombo" />
  <span class="special-toggle-slider"></span>
  <span class="text-xs font-semibold" style="color:var(--ink)" x-text="specialCombo ? 'เปิด' : 'ปิด'"></span>
  </label>
  </div>
  </div>
- <div class="special-combo-rates" x-show="specialCombo && !showComboSettings" x-transition>
+ <div class="special-combo-rates" x-show="hasSpecialComboConfigured() && specialCombo && !showComboSettings" x-transition>
  <div class="special-rate-card">
  <div class="text-xs" style="color:var(--muted)">ลูกค้าใหม่ (New)</div>
  <div style="color:var(--ink);font-size:13px" x-html="promoConfig.special.newTiers.map(t => t.min + '+ ชิ้น → <strong>' + t.rate + '%</strong>').join(' · ')"></div>
@@ -925,9 +926,9 @@
  <div style="color:var(--ink);font-size:13px" x-html="'ในตะกร้าที่เข้าเงื่อนไข → <strong>' + promoConfig.special.waterRate + '%</strong>'"></div>
  </div>
  </div>
- <div class="text-xs mt-2" style="color:var(--muted)" x-show="!specialCombo && !showComboSettings"> ปิด = คอมโบเดือนปกติ · ใบเสนอ/สรุปถึงวันหมดโปรเดือน · เปิด = ส่วนลดพิเศษ และใบเสนอ/สรุปถึงวันหมดคอมโบ
+ <div class="text-xs mt-2" style="color:var(--muted)" x-show="hasSpecialComboConfigured() && !specialCombo && !showComboSettings"> ปิด = คอมโบเดือนปกติ · ใบเสนอ/สรุปถึงวันหมดโปรเดือน · เปิด = ส่วนลดพิเศษ และใบเสนอ/สรุปถึงวันหมดคอมโบ
  </div>
- <div class="text-xs mt-2" style="color:#b45309" x-show="specialCombo && !isSpecialComboInPeriod() && !showComboSettings" x-text="specialComboIdleText()"></div>
+ <div class="text-xs mt-2" style="color:#b45309" x-show="hasSpecialComboConfigured() && specialCombo && !isSpecialComboInPeriod() && !showComboSettings" x-text="specialComboIdleText()"></div>
 
  <!-- Combo Settings Panel -->
  <div class="combo-settings" x-show="showComboSettings" x-transition>
