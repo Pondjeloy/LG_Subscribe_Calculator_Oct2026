@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LG Subscribe Calculator build 2026.10.28-v4 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
+<!-- LG Subscribe Calculator build 2026.10.29-v1 · โปรตุลาคม 2569 · ใบเสนอราคาใช้ฟอนต์เดียวกับเครื่องคิดเลข -->
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
@@ -1898,7 +1898,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.28-v4',
+ buildVersion: '2026.10.29-v1',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -6570,10 +6570,13 @@ function lgTradeInCalculator() {
     return {code,name:found?found.model.name:name,category:found?found.category:(tv?'โทรทัศน์ / TV':'เครื่องกรองน้ำ'),term:'5Y',serviceType:tv?'No Service':'Visit',serviceCycle:tv?'No Service':'ทุก '+cycle+' เดือน',regular,effectiveMonthly:tv?price/2:price,promoMonths:tv?12:60,postPromoPrice:price,promo:'LG PuriCare Trade-in Promotion',advancePayment:advance,outright:false,totalContractMonths:60,totalSaving:(regular-price)*60,billSchedule:tv?[{range:'1-12',price:price/2},{range:'13-60',price}]:[{range:'1-60',price}]};
    };
    const cart=[make(q.model.code,q.model.name,q.model.regular,q.model.price,q.model.cycle,q.model.tv,q.advance),make(q.water.code,'เครื่องกรองน้ำ '+q.water.color,799,549,6,false,0)];
-   const render=this.quotationHtml;
-   // A separate context reuses the existing document renderer without changing the normal cart.
-   // Alpine's `this` is a proxy with no own keys, so spreading it copies nothing; inherit from it instead.
-   return Object.assign(Object.create(this),{cart,quoteCustomer:{...this.quoteCustomer},specialCombo:false,quotePayOnce:false,
+   const context=lgCalculator();
+   const render=context.quotationHtml;
+   // Never inherit from Alpine's scope proxy: inherited setters mutate the live cart/methods.
+   // Copy only document inputs into a fresh calculator with unbound methods.
+   return Object.assign(context,{cart,quoteCustomer:JSON.parse(JSON.stringify(this.quoteCustomer)),
+    customerType:this.customerType,quoteShowGrandTotal:this.quoteShowGrandTotal,
+    toast:this.toast,specialCombo:false,quotePayOnce:false,
     comboRate:()=>0,comboRateFor:()=>0,isSpecialComboEffective:()=>false,isEventPromoActive:()=>false,
     promoDateText:()=> 'LG PuriCare Trade-in · 28 ต.ค.–30 พ.ย. 2569',
     quoteValidPromoEnd:()=> '2569-11-30',
