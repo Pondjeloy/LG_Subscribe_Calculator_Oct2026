@@ -1525,6 +1525,11 @@
  </div>
  </div>
 
+ <div class="mb-3 text-sm" x-show="isOverMonthlyLimit()" style="background:#fef2f2;border:1px solid #dc2626;color:#991b1b;border-radius:12px;padding:10px 12px">
+ <div class="font-semibold">⚠️ ค่างวดรวมเกิน ฿6,000/เดือน</div>
+ <div class="text-xs mt-1" x-text="'สูงสุด ฿' + peakMonthlyNet().peak.toLocaleString() + ' ต่อเดือน (บิลที่ ' + peakMonthlyNet().bill + ') หลังหักส่วนลดแล้ว · เกินเพดาน ฿' + (peakMonthlyNet().peak - monthlyLimit).toLocaleString() + ' — โปรดแจ้งลูกค้า/ตรวจสอบเงื่อนไขก่อนทำสัญญา'"></div>
+ </div>
+
  <div class="summary-promo-box mb-3">
  <div class="text-xs text-gray-600 uppercase tracking-wider mb-1">ค่าเช่า/เดือน (สุทธิ)</div>
  <div class="price-highlight text-3xl" x-text="'฿' + netMonthly().toLocaleString()"></div>
@@ -1898,7 +1903,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.31-v1',
+ buildVersion: '2026.10.31-v2',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -3673,6 +3678,19 @@ function lgCalculator() {
  totalMonthly() { return this.cart.reduce((s, it) => s + (it.outright ? 0 : it.postPromoPrice), 0); },
  comboDiscount() { return Math.round((this.totalMonthly() - this.netMonthly()) * 100) / 100; },
  // Use each item's final bill so summary and billing share the same rounding.
+ // เพดานค่างวดรวม/เดือน (หลังหักคอมโบ) — เกินแล้วแจ้งเตือนอย่างเดียว ยังเพิ่มสินค้าได้
+ monthlyLimit: 6000,
+ peakMonthlyNet() {
+ const per = {};
+ this.cart.forEach(item => {
+ if (item.outright) return;
+ this.itemComboSchedule(item).bills.forEach(b => { per[b.bill] = (per[b.bill] || 0) + b.price; });
+ });
+ let peak = 0, at = 0;
+ Object.keys(per).forEach(k => { if (per[k] > peak) { peak = per[k]; at = +k; } });
+ return { peak: Math.round(peak * 100) / 100, bill: at };
+ },
+ isOverMonthlyLimit() { return this.peakMonthlyNet().peak > this.monthlyLimit; },
  netMonthly() {
  return Math.round(this.cart.reduce((sum, item) => {
  if (item.outright) return sum;
