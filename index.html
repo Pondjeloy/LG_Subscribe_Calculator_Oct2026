@@ -793,7 +793,7 @@
  <section x-show="calculatorMode === 'tradeIn'" x-cloak class="max-w-7xl px-6 py-8" aria-label="LG PuriCare Trade-in Promotion">
   <div class="card" style="padding:24px">
    <h2 class="font-display font-bold text-2xl">LG PuriCare Trade-in Promotion</h2>
-   <p style="margin:8px 0 20px">Buy 1, Get 1 FREE! · 28 ต.ค.–30 พ.ย. 2569 · สินค้าหลัก 1 เครื่อง + เครื่องกรองน้ำ 1 เครื่อง</p>
+   <p style="margin:8px 0 20px">Buy 1, Get 1 FREE! · 31 ต.ค.–11 พ.ย. 2569 · สินค้าหลัก 1 เครื่อง + เครื่องกรองน้ำ 1 เครื่อง</p>
    <p x-show="!tradeInActive()" style="color:#b45309;margin-bottom:16px">อยู่นอกช่วงโปรโมชั่น — แสดงราคาเพื่ออ้างอิงเท่านั้น</p>
    <div class="grid grid-cols-1 gap-4" style="max-width:900px">
     <label>สินค้าหลัก (สัญญา 5 ปี)
@@ -813,7 +813,7 @@
   </div>
   <template x-if="tradeInQuote()">
    <div class="card" style="padding:24px;margin-top:20px" x-data="{}">
-    <h3 class="font-bold text-lg" x-text="tradeInQuote().model.group === 5 ? 'Premium 5-Product Combo' : 'Premium 10-Product Combo'"></h3>
+    <h3 class="font-bold text-lg" x-text="tradeInQuote().model.group === 5 ? 'Promotion 1-Product Combo' : 'Promotion 2-Product Combo'"></h3>
     <p style="margin:8px 0 16px" x-text="tradeInBenefit()"></p>
     <div style="overflow-x:auto">
      <table style="width:100%;border-collapse:collapse;min-width:560px">
@@ -1903,7 +1903,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.31-v2',
+ buildVersion: '2026.10.31-v3',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -6507,7 +6507,7 @@ ${'</'+'html>'}`;
 function lgTradeInCalculator() {
  return {
   calculatorMode: 'normal', tradeInMain: '', tradeInWater: '', tradeInMessage: '',
-  tradeInConfig: {"start": "2026-10-28", "end": "2026-11-30", "months": 60, "waterPrice": 549, "waterRegular": 799, "waterModels": [{"code": "WD516AN.ACNPLMT", "color": "น้ำเงิน"}, {"code": "WD516AN.AEWPLMT", "color": "ขาว"}, {"code": "WD516AN.ASLPLMT", "color": "เงิน"}, {"code": "WD518AN.ABGPLMT", "color": "เบจ"}, {"code": "WD518AN.AWHPLMT", "color": "ขาว"}, {"code": "WD518AN.ACGPLMT", "color": "เทา"}], "models": [{"code": "100MRGB96BS.ATM", "name": "โทรทัศน์ Micro RGB 100 นิ้ว", "group": 5, "regular": 4499, "price": 3950, "cycle": 0, "tv": true, "page": 4, "advance": 23700}, {"code": "OLED77C6PSA.ATM", "name": "โทรทัศน์ OLED 77 นิ้ว", "group": 5, "regular": 1999, "price": 1450, "cycle": 0, "tv": true, "page": 6, "advance": 8700}, {"code": "OLED83C6PSA.ATM", "name": "โทรทัศน์ OLED 83 นิ้ว", "group": 5, "regular": 2699, "price": 2150, "cycle": 0, "tv": true, "page": 5, "advance": 12900}, {"code": "WT2520NHEG.ABGPETH", "name": "Wash Tower ซัก 25 / อบ 20 กก.", "group": 5, "regular": 2399, "price": 1850, "cycle": 12, "tv": false, "page": 7, "advance": 0}, {"code": "WT2116SHEG.ABGPETH", "name": "Wash Tower ซัก 21 / อบ 16 กก.", "group": 5, "regular": 1999, "price": 1450, "cycle": 12, "tv": false, "page": 8, "advance": 0}, {"code": "GC-G24FFQKB.AEEPLM1", "name": "ตู้เย็น Multi Door 22.5 คิว", "group": 10, "regular": 1349, "price": 1120, "cycle": 24, "tv": false, "page": 9, "advance": 0}, {"code": "GC-X257CMEW.ATEPLMT", "name": "ตู้เย็น Side by Side 22.4 คิว", "group": 10, "regular": 1249, "price": 1020, "cycle": 24, "tv": false, "page": 10, "advance": 0}, {"code": "WT1410NHEG.ABGPQTH", "name": "Wash Tower ซัก 14 / อบ 10 กก.", "group": 10, "regular": 1599, "price": 1370, "cycle": 12, "tv": false, "page": 11, "advance": 0}, {"code": "AS10GDBY0.ABAE", "name": "เครื่องฟอกอากาศ Alpha Pet", "group": 10, "regular": 1199, "price": 970, "cycle": 6, "tv": false, "page": 12, "advance": 0}, {"code": "SAQ18B.S21", "name": "เครื่องปรับอากาศ DUALCOOL AI 18,000 BTU", "group": 10, "regular": 1149, "price": 920, "cycle": 6, "tv": false, "page": 13, "advance": 0}, {"code": "SAQ24B.S21", "name": "เครื่องปรับอากาศ DUALCOOL AI 24,000 BTU", "group": 10, "regular": 1299, "price": 1070, "cycle": 6, "tv": false, "page": 14, "advance": 0}, {"code": "ART13A.SR1", "name": "เครื่องปรับอากาศ ARTCOOL AI 11,942 BTU", "group": 10, "regular": 1049, "price": 820, "cycle": 6, "tv": false, "page": 15, "advance": 0}, {"code": "ART18A.SR1", "name": "เครื่องปรับอากาศ ARTCOOL AI 18,084 BTU", "group": 10, "regular": 1249, "price": 1020, "cycle": 6, "tv": false, "page": 16, "advance": 0}, {"code": "OLED65C6PSA.ATM", "name": "โทรทัศน์ OLED 65 นิ้ว", "group": 10, "regular": 1299, "price": 1070, "cycle": 0, "tv": true, "page": 17, "advance": 6420}, {"code": "OLED55C6PSA.ATM", "name": "โทรทัศน์ OLED 55 นิ้ว", "group": 10, "regular": 1099, "price": 870, "cycle": 0, "tv": true, "page": 18, "advance": 5220}]},
+  tradeInConfig: {"start": "2026-10-31", "end": "2026-11-11", "months": 60, "waterPrice": 549, "waterRegular": 799, "waterModels": [{"code": "WD516AN.ACNPLMT", "color": "น้ำเงิน"}, {"code": "WD516AN.AEWPLMT", "color": "ขาว"}, {"code": "WD516AN.ASLPLMT", "color": "เงิน"}, {"code": "WD518AN.ABGPLMT", "color": "เบจ"}, {"code": "WD518AN.AWHPLMT", "color": "ขาว"}, {"code": "WD518AN.ACGPLMT", "color": "เทา"}], "models": [{"code": "100MRGB96BS.ATM", "name": "โทรทัศน์ Micro RGB 100 นิ้ว", "group": 5, "regular": 4499, "price": 3950, "cycle": 0, "tv": true, "page": 4, "advance": 23700}, {"code": "OLED77C6PSA.ATM", "name": "โทรทัศน์ OLED 77 นิ้ว", "group": 5, "regular": 1999, "price": 1450, "cycle": 0, "tv": true, "page": 6, "advance": 8700}, {"code": "OLED83C6PSA.ATM", "name": "โทรทัศน์ OLED 83 นิ้ว", "group": 5, "regular": 2699, "price": 2150, "cycle": 0, "tv": true, "page": 5, "advance": 12900}, {"code": "WT2520NHEG.ABGPETH", "name": "Wash Tower ซัก 25 / อบ 20 กก.", "group": 5, "regular": 2399, "price": 1850, "cycle": 12, "tv": false, "page": 7, "advance": 0}, {"code": "WT2116SHEG.ABGPETH", "name": "Wash Tower ซัก 21 / อบ 16 กก.", "group": 5, "regular": 1999, "price": 1450, "cycle": 12, "tv": false, "page": 8, "advance": 0}, {"code": "GC-G24FFQKB.AEEPLM1", "name": "ตู้เย็น Multi Door 22.5 คิว", "group": 10, "regular": 1349, "price": 1120, "cycle": 24, "tv": false, "page": 9, "advance": 0}, {"code": "GC-X257CMEW.ATEPLMT", "name": "ตู้เย็น Side by Side 22.4 คิว", "group": 10, "regular": 1249, "price": 1020, "cycle": 24, "tv": false, "page": 10, "advance": 0}, {"code": "WT1410NHEG.ABGPQTH", "name": "Wash Tower ซัก 14 / อบ 10 กก.", "group": 10, "regular": 1599, "price": 1370, "cycle": 12, "tv": false, "page": 11, "advance": 0}, {"code": "AS10GDBY0.ABAE", "name": "เครื่องฟอกอากาศ Alpha Pet", "group": 10, "regular": 1199, "price": 970, "cycle": 6, "tv": false, "page": 12, "advance": 0}, {"code": "SAQ18B.S21", "name": "เครื่องปรับอากาศ DUALCOOL AI 18,000 BTU", "group": 10, "regular": 1149, "price": 920, "cycle": 6, "tv": false, "page": 13, "advance": 0}, {"code": "SAQ24B.S21", "name": "เครื่องปรับอากาศ DUALCOOL AI 24,000 BTU", "group": 10, "regular": 1299, "price": 1070, "cycle": 6, "tv": false, "page": 14, "advance": 0}, {"code": "ART13A.SR1", "name": "เครื่องปรับอากาศ ARTCOOL AI 11,942 BTU", "group": 10, "regular": 1049, "price": 820, "cycle": 6, "tv": false, "page": 15, "advance": 0}, {"code": "ART18A.SR1", "name": "เครื่องปรับอากาศ ARTCOOL AI 18,084 BTU", "group": 10, "regular": 1249, "price": 1020, "cycle": 6, "tv": false, "page": 16, "advance": 0}, {"code": "OLED65C6PSA.ATM", "name": "โทรทัศน์ OLED 65 นิ้ว", "group": 10, "regular": 1299, "price": 1070, "cycle": 0, "tv": true, "page": 17, "advance": 6420}, {"code": "OLED55C6PSA.ATM", "name": "โทรทัศน์ OLED 55 นิ้ว", "group": 10, "regular": 1099, "price": 870, "cycle": 0, "tv": true, "page": 18, "advance": 5220}]},
   tradeInActive(now = new Date()) {
    const day = new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
    return day >= this.tradeInConfig.start && day <= this.tradeInConfig.end;
@@ -6537,7 +6537,7 @@ function lgTradeInCalculator() {
   },
   tradeInBenefit() {
    const q=this.tradeInQuote(); if (!q) return '';
-   return q.model.group === 5 ? 'Premium 5: สินค้าหลักลด 549 + เครื่องกรองน้ำลด 250 = 799 บาท/เดือน × 60 เดือน รวมส่วนลด 47,940 บาท เทียบเท่าค่าเครื่องกรองน้ำราคาปกติ 60 เดือน' : 'Premium 10: สินค้าหลักลด 229 + เครื่องกรองน้ำลด 250 = 479 บาท/เดือน × 60 เดือน รวมส่วนลด 28,740 บาท ตามแคมเปญ “ฟรีเครื่องกรองน้ำ สัญญา 3 ปี” (ตารางบริษัทระบุเทียบ 36 เดือน) โดยสัญญาที่สมัครจริงของทั้งสองเครื่องคือ 5 ปี';
+   return q.model.group === 5 ? 'Promotion 1: สินค้าหลักลด 549 + เครื่องกรองน้ำลด 250 = 799 บาท/เดือน × 60 เดือน รวมส่วนลด 47,940 บาท เทียบเท่าค่าเครื่องกรองน้ำราคาปกติ 60 เดือน' : 'Promotion 2: สินค้าหลักลด 229 + เครื่องกรองน้ำลด 250 = 479 บาท/เดือน × 60 เดือน รวมส่วนลด 28,740 บาท ตามแคมเปญ “ฟรีเครื่องกรองน้ำ สัญญา 3 ปี” (ตารางบริษัทระบุเทียบ 36 เดือน) โดยสัญญาที่สมัครจริงของทั้งสองเครื่องคือ 5 ปี';
   },
   tradeInInitialNote() {
    const q=this.tradeInQuote(); if (!q) return '';
@@ -6549,9 +6549,9 @@ function lgTradeInCalculator() {
    return [
     'LG SUBSCRIBE — ใบสรุปราคา 2 รายการ',
     'LG PuriCare Trade-in Promotion · Buy 1, Get 1 FREE!',
-    'โปรโมชั่น 28 ต.ค.–30 พ.ย. 2569',
+    'โปรโมชั่น 31 ต.ค.–11 พ.ย. 2569',
     ...(this.tradeInActive()?[]:['อยู่นอกช่วงโปรโมชั่น — ราคาเพื่ออ้างอิงเท่านั้น']),
-    q.model.group === 5 ? 'Premium 5-Product Combo' : 'Premium 10-Product Combo',
+    q.model.group === 5 ? 'Promotion 1-Product Combo' : 'Promotion 2-Product Combo',
     '', '1. '+q.model.name+' · '+q.model.code,
     this.tradeInService(),
     'ราคาปกติ '+money(q.model.regular)+' บาท/เดือน → ราคาโปร '+money(q.model.price)+' บาท/เดือน',
@@ -6596,11 +6596,11 @@ function lgTradeInCalculator() {
     customerType:this.customerType,quoteShowGrandTotal:this.quoteShowGrandTotal,
     toast:this.toast,specialCombo:false,quotePayOnce:false,
     comboRate:()=>0,comboRateFor:()=>0,isSpecialComboEffective:()=>false,isEventPromoActive:()=>false,
-    promoDateText:()=> 'LG PuriCare Trade-in · 28 ต.ค.–30 พ.ย. 2569',
-    quoteValidPromoEnd:()=> '2569-11-30',
+    promoDateText:()=> 'LG PuriCare Trade-in · 31 ต.ค.–11 พ.ย. 2569',
+    quoteValidPromoEnd:()=> '2569-11-11',
     advanceKindParen:(it,start,end)=>it.advancePayment>0&&end<=12?'หลังหักเงินล่วงหน้า':'',
     quoteRemarkItems:()=>[
-     {type:'text',text:'LG PuriCare Trade-in Promotion · 28 ต.ค.–30 พ.ย. 2569'},
+     {type:'text',text:'LG PuriCare Trade-in Promotion · 31 ต.ค.–11 พ.ย. 2569'},
      {type:'text',text:this.tradeInInitialNote()},
      {type:'text',text:this.tradeInBenefit()},
      {type:'text',text:'ทั้งสองเครื่องเป็นสัญญา 5 ปี คำว่า “ฟรี” หมายถึงมูลค่าส่วนลดรวม เครื่องกรองน้ำยังมีค่างวด 549 บาท/เดือน'},
