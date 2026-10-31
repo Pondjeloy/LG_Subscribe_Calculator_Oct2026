@@ -892,7 +892,7 @@
  </div>
  </section>
 
- <!-- Subscribe Day 3–27 ต.ค. 2569 · ใหม่ 2+ / เดิม 1+ 15% · เครื่องกรองน้ำในตะกร้าที่เข้าเงื่อนไข 20% -->
+ <!-- SUBSCRIBE DAY Special Deal 31 ต.ค.–11 พ.ย. 2569 · ใหม่ 2+ / เดิม 1+ 15% -->
  <section class="special-combo-banner" :class="(specialCombo && hasSpecialComboConfigured()) ? 'active' : ''">
  <div class="special-combo-glow"></div>
  <div style="position:relative;z-index:2">
@@ -1731,15 +1731,15 @@ function lgCalculator() {
  existTiers: [ {min:1, rate:10} ],
  waterRate: 15
  },
- // Subscribe Day (3–27 ต.ค. 2569) ถอดออกตาม user 28 ต.ค. — เหลือคอมโบเดือน 10% / เครื่องกรองน้ำ 15%
+ // SUBSCRIBE DAY Special Deal 31 ต.ค.–11 พ.ย. 2569 (Halloween Day) · ใหม่ 2+ / เดิม 1+ ลด 15% · คอมโบเดือน 10% ใช้ถึง 31 ต.ค.
  special: {
- name: '',
- dateStart: '',
- dateEnd: '',
- note: '',
- newTiers: [],
- existTiers: [],
- waterRate: 0
+ name: 'SUBSCRIBE DAY Special Deal 15%',
+ dateStart: '2569-10-31',
+ dateEnd: '2569-11-11',
+ note: 'Halloween Day · ใหม่ 2+ / เดิม 1+ ลด 15% · 31 ต.ค. – 11 พ.ย. 2569',
+ newTiers: [ {min:2, rate:15} ],
+ existTiers: [ {min:1, rate:15} ],
+ waterRate: 15
  },
  // 9.9 Surprise Deal — จบ 11 ก.ย. 2569 · catalog กลับบิลแรก 149 ตามโปรเดือน
  eventPromo: {
@@ -1898,7 +1898,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.29-v1',
+ buildVersion: '2026.10.31-v1',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -3200,13 +3200,13 @@ function lgCalculator() {
  waterRate: 15
  },
  special: {
- name: '',
- dateStart: '',
- dateEnd: '',
- note: '',
- newTiers: [],
- existTiers: [],
- waterRate: 0
+ name: 'SUBSCRIBE DAY Special Deal 15%',
+ dateStart: '2569-10-31',
+ dateEnd: '2569-11-11',
+ note: 'Halloween Day · ใหม่ 2+ / เดิม 1+ ลด 15% · 31 ต.ค. – 11 พ.ย. 2569',
+ newTiers: [ {min:2, rate:15} ],
+ existTiers: [ {min:1, rate:15} ],
+ waterRate: 15
  },
  eventPromo: {
  name: '9.9 Surprise Deal',
