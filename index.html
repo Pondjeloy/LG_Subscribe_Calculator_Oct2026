@@ -1903,7 +1903,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.31-v3',
+ buildVersion: '2026.10.31-v4',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -5337,16 +5337,17 @@ function lgCalculator() {
       });
     },
     quoteValidPromoEnd() {
-      // วันหมดที่ใกล้สุด: โปรอีเวนต์ (9.9) / คอมโบพิเศษที่ยังเปิด / โปรเดือนปกติ
+      // วันหมดที่ใกล้สุด: โปรอีเวนต์ (9.9) + (ตะกร้าได้คอมโบพิเศษ → วันหมดคอมโบพิเศษ / ไม่ได้ → โปรเดือนปกติ)
       const dates = [];
       const ev = this.promoConfig && this.promoConfig.eventPromo;
       if (this.isEventPromoActive() && ev && ev.dateEnd) dates.push(String(ev.dateEnd));
-      if (this.isSpecialComboEffective()) {
-        const sp = this.promoConfig && this.promoConfig.special;
-        if (sp && sp.dateEnd) dates.push(String(sp.dateEnd));
+      const sp = this.promoConfig && this.promoConfig.special;
+      if (this.isSpecialComboEffective() && this.comboRate() > 0 && sp && sp.dateEnd) {
+        dates.push(String(sp.dateEnd));
+      } else {
+        const n = this.promoConfig && this.promoConfig.normal && this.promoConfig.normal.dateEnd;
+        if (n) dates.push(String(n));
       }
-      const n = this.promoConfig && this.promoConfig.normal && this.promoConfig.normal.dateEnd;
-      if (n) dates.push(String(n));
       if (!dates.length) return '';
       dates.sort();
       return dates[0];
