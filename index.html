@@ -1903,7 +1903,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.31-v5',
+ buildVersion: '2026.10.31-v6',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -5974,6 +5974,7 @@ ${'</'+'style>'}
           + '<div class="baht">฿ BAHT : ' + esc(this.bahtText(grand)) + '</div>'
         ) : ''}
       </div>
+      ${(typeof this.isOverMonthlyLimit === 'function' && this.isOverMonthlyLimit()) ? '<div style="margin-top:8px;padding:8px 10px;border:1px solid #dc2626;border-radius:6px;color:#991b1b;background:#fef2f2;font-size:12px"><b>⚠️ ค่างวดรวมเกิน ฿' + this.monthlyLimit.toLocaleString() + '/เดือน</b> — สูงสุด ฿' + this.peakMonthlyNet().peak.toLocaleString() + ' ต่อเดือน (บิลที่ ' + this.peakMonthlyNet().bill + ') หลังหักส่วนลดแล้ว</div>' : ''}
     </div>
 
     ${(opts.includeCareSlides === false) ? '' : this.careServiceSlidesHtml()}
