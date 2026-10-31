@@ -1903,7 +1903,7 @@ function lgCalculator() {
  compareB: { term: '5Y', serviceType: 'Visit', modelIndices: [] },
  cart: [],
  toast: { show: false, msg: '' },
- buildVersion: '2026.10.31-v4',
+ buildVersion: '2026.10.31-v5',
  summaryAudience: 'general',
  summaryAudienceLabel() {
  return {general:'แบบทั่วไป', credit:'แบบบัตรเครดิต', account:'แบบหักบัญชีอัตโนมัติ', product:'เฉพาะสินค้าและราคา'}[this.summaryAudience] || 'แบบทั่วไป';
@@ -3119,6 +3119,19 @@ function lgCalculator() {
  const p = localStorage.getItem('lgQuotePayOnce');
  if (p === '1' || p === 'true') this.quotePayOnce = true;
  else if (p === '0' || p === 'false') this.quotePayOnce = false;
+ } catch(e) {}
+ // ผู้เสนอราคา — จำในเบราว์เซอร์ (localStorage) ไม่ต้องกรอกใหม่เมื่อเว็บอัปเดต
+ try {
+ const keys = ['sellerName', 'sellerPhone', 'sellerLine', 'sellerTitle', 'sellerEmail'];
+ const saved = JSON.parse(localStorage.getItem('lgQuoteSeller') || '{}');
+ keys.forEach(k => { if (typeof saved[k] === 'string') this.quoteCustomer[k] = saved[k]; });
+ keys.forEach(k => this.$watch('quoteCustomer.' + k, () => {
+ try {
+ const o = {};
+ keys.forEach(x => { o[x] = this.quoteCustomer[x] || ''; });
+ localStorage.setItem('lgQuoteSeller', JSON.stringify(o));
+ } catch(e) {}
+ }));
  } catch(e) {}
  const shockN = this.applyShockPromoCatalog();
  if (shockN > 0) {
